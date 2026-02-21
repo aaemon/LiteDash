@@ -1,65 +1,44 @@
-import Image from "next/image";
+import Link from 'next/link';
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
+    <div className="flex flex-col items-center justify-center h-screen animate-fade-in" style={{ padding: '0 2rem' }}>
+
+      {/* Background decoration */}
+      <div
+        style={{
+          position: 'absolute', top: 0, left: 0, right: 0,
+          height: '500px',
+          background: 'linear-gradient(145deg, var(--accent-primary) 0%, transparent 100%)',
+          opacity: 0.05,
+          zIndex: -1,
+          pointerEvents: 'none'
+        }}
+      />
+
+      <div className="glass-card flex flex-col items-center justify-center mt-8 text-center" style={{ maxWidth: '600px', width: '100%', padding: '4rem 2rem' }}>
+        <h1 style={{ marginBottom: '1rem', background: 'linear-gradient(90deg, var(--text-primary), var(--accent-primary))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+          LiteLLM Portal
+        </h1>
+
+        <p style={{ marginBottom: '2.5rem', fontSize: '1.2rem', color: 'var(--text-secondary)' }}>
+          Manage your AI models, control api usage, and track your expenditures efficiently in one unified dashboard.
+        </p>
+
+        <div className="flex gap-4" style={{ width: '100%', justifyContent: 'center' }}>
+          <Link href="/login" className="btn btn-primary" style={{ padding: '0.75rem 2.5rem', fontSize: '1.05rem' }}>
+            Get Started
+          </Link>
+          <a href="https://docs.litellm.ai/docs/" target="_blank" rel="noreferrer" className="btn btn-outline" style={{ padding: '0.75rem 2.5rem', fontSize: '1.05rem' }}>
+            LiteLLM Docs
           </a>
         </div>
-      </main>
+      </div>
+
+      {/* Footer / Info */}
+      <div style={{ position: 'absolute', bottom: '2rem', color: 'var(--text-tertiary)', fontSize: '0.9rem' }}>
+        Built with Next.js and ❤️ for AI
+      </div>
     </div>
   );
 }

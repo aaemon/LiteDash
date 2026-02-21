@@ -1,0 +1,33 @@
+services:
+  litedash:
+    build: .
+    # Or use pre-built image:
+    # image: aaemon/litedash:latest
+    container_name: litedash
+    ports:
+      - "3000:3000"
+    environment:
+      - LITELLM_URL=http://litellm:4000
+      - LITELLM_MASTER_KEY=your-litellm-master-key
+      - LITELLM_UI_USERNAME=admin
+      - LITELLM_UI_PASSWORD=your-secure-password
+      - NODE_ENV=production
+    volumes:
+      - ./config:/app/config
+    restart: unless-stopped
+    # If running LiteLLM in the same compose stack:
+    # depends_on:
+    #   - litellm
+
+  # Uncomment to run LiteLLM alongside LiteDash:
+  # litellm:
+  #   image: ghcr.io/berriai/litellm:main-latest
+  #   container_name: litellm
+  #   ports:
+  #     - "4000:4000"
+  #   environment:
+  #     - MASTER_KEY=your-litellm-master-key
+  #     - DATABASE_URL=postgresql://user:pass@db:5432/litellm
+  #   volumes:
+  #     - ./litellm-config.yaml:/app/config.yaml
+  #   command: ["--config", "/app/config.yaml"]

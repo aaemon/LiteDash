@@ -1,0 +1,8 @@
+{
+  "appName": "LiteDash",
+  "apiEndpoint": "https://llm.raspicloud.online",
+  "logoUrl": "/logo.png",
+  "currency": "BDT",
+  "currencySymbol": "৳",
+  "currencyMultiplier": 130
+}
