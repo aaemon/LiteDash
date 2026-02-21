@@ -61,20 +61,25 @@ docker run -d \
 
 Then open [http://localhost:3000](http://localhost:3000)
 
-### Option 2: Docker Compose
+### Option 2: Docker Compose (All-in-One Stack)
+
+This repository includes a `docker-compose.yml` that spins up **LiteDash**, **LiteLLM Proxy**, and a **PostgreSQL Database** all together.
 
 ```bash
 # Clone the repo
 git clone https://github.com/aaemon/LiteDash.git
 cd LiteDash
 
-# Copy and edit environment
-cp .env.example .env
-# Edit .env with your LiteLLM URL and credentials
+# 1. Provide your LiteLLM configuration
+# Edit litellm-config.yaml to add your models (an example with Ollama models is provided)
 
-# Run
+# 2. Run the full stack
 docker compose up -d
 ```
+
+The services will be available at:
+- **LiteDash Admin Portal**: [http://localhost:3000](http://localhost:3000)
+- **LiteLLM Proxy API**: `http://localhost:4000`
 
 ### Option 3: Local Development
 
