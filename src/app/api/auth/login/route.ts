@@ -46,9 +46,11 @@ export async function POST(req: Request) {
         }
 
         const c = await cookies();
+        const isSecure = req.headers.get('x-forwarded-proto') === 'https' || req.url.startsWith('https://');
+
         c.set('portal_session', JSON.stringify(sessionData), {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
+            secure: isSecure, // Only true if accessed via HTTPS or behind an HTTPS proxy
             maxAge: 60 * 60 * 24, // 1 day
             path: '/'
         });
