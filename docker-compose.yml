@@ -1,4 +1,7 @@
 services:
+  # -----------------------------------------------------------------
+  #  Admin Portal (LiteDash)
+  # -----------------------------------------------------------------
   litedash:
     build: .
     # Or use pre-built image:
@@ -7,27 +10,52 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - LITELLM_URL=http://litellm:4000
-      - LITELLM_MASTER_KEY=your-litellm-master-key
-      - LITELLM_UI_USERNAME=admin
-      - LITELLM_UI_PASSWORD=your-secure-password
+      - LITELLM_URL=http://litellm-proxy:4000
+      - LITELLM_MASTER_KEY=${LITELLM_MASTER_KEY:-your-master-key}
+      - LITELLM_UI_USERNAME=${LITELLM_UI_USERNAME:-admin}
+      - LITELLM_UI_PASSWORD=${LITELLM_UI_PASSWORD:-your-secure-password}
       - NODE_ENV=production
     volumes:
       - ./config:/app/config
+    depends_on:
+      - litellm-proxy
     restart: unless-stopped
-    # If running LiteLLM in the same compose stack:
-    # depends_on:
-    #   - litellm
 
-  # Uncomment to run LiteLLM alongside LiteDash:
-  # litellm:
-  #   image: ghcr.io/berriai/litellm:main-latest
-  #   container_name: litellm
-  #   ports:
-  #     - "4000:4000"
-  #   environment:
-  #     - MASTER_KEY=your-litellm-master-key
-  #     - DATABASE_URL=postgresql://user:pass@db:5432/litellm
-  #   volumes:
-  #     - ./litellm-config.yaml:/app/config.yaml
-  #   command: ["--config", "/app/config.yaml"]
+  # -----------------------------------------------------------------
+  #  LiteLLM Proxy API Gateway
+  # -----------------------------------------------------------------
+  litellm-proxy:
+    image: ghcr.io/berriai/litellm:main-latest
+    container_name: litellm-proxy
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./litellm-config.yaml:/app/config.yaml
+    environment:
+      - LITELLM_MASTER_KEY=${LITELLM_MASTER_KEY:-your-master-key}
+      - UI_USERNAME=${LITELLM_UI_USERNAME:-admin}
+      - UI_PASSWORD=${LITELLM_UI_PASSWORD:-your-secure-password}
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-llm_user}:${POSTGRES_PASSWORD:-your-db-password}@litellm-db:5432/${POSTGRES_DB:-litellm}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - litellm-db
+    restart: always
+    command: ["--config", "/app/config.yaml"]
+
+  # -----------------------------------------------------------------
+  #  LiteLLM Token & Key Database
+  # -----------------------------------------------------------------
+  litellm-db:
+    image: postgres:16
+    container_name: litellm-db
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-llm_user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-your-db-password}
+      - POSTGRES_DB=${POSTGRES_DB:-litellm}
+    volumes:
+      - litellm_db_data:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  litellm_db_data:
