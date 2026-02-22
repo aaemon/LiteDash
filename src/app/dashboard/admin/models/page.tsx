@@ -65,19 +65,13 @@ export default function AdminModelsPage() {
         return <span key={label} style={{ fontSize: '0.58rem', padding: '0.1rem 0.3rem', borderRadius: 'var(--radius-full)', background: 'rgba(79, 110, 247, 0.08)', color: 'var(--accent-primary)', fontWeight: 600 }}>{label}</span>;
     };
 
-    // Filter out internal endpoints
-    const filteredModels = models.filter(m => {
-        const apiBase = m.litellm_params?.api_base || '';
-        return !apiBase.includes('host.docker.internal');
-    });
-
     return (
         <div className="flex flex-col gap-6">
             <header>
                 <div className="page-header-actions">
                     <div>
                         <h1 style={{ marginBottom: '0.25rem' }}>Model Management</h1>
-                        <p>{filteredModels.length} model{filteredModels.length !== 1 ? 's' : ''} provisioned on this instance.</p>
+                        <p>{models.length} model{models.length !== 1 ? 's' : ''} provisioned on this instance.</p>
                     </div>
                     <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
                         {showForm ? 'Cancel' : '+ Add Model'}
@@ -130,14 +124,14 @@ export default function AdminModelsPage() {
 
             {loading ? (
                 <div style={{ color: 'var(--text-tertiary)', fontSize: '0.85rem' }}>Loading models...</div>
-            ) : filteredModels.length === 0 ? (
+            ) : models.length === 0 ? (
                 <div className="glass-card" style={{ textAlign: 'center', padding: '3rem' }}>
                     <h3 style={{ fontWeight: 600, marginBottom: '0.25rem' }}>No Models Configured</h3>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>Add your first model to get started.</p>
                 </div>
             ) : (
                 <div className="responsive-grid-2">
-                    {filteredModels.map((m, idx) => {
+                    {models.map((m: any, idx: number) => {
                         const info = m.model_info || {};
                         const params = m.litellm_params || {};
                         const capabilities = [
@@ -177,8 +171,8 @@ export default function AdminModelsPage() {
                                     </div>
                                 </div>
 
-                                {/* Endpoint Details (Filtered) */}
-                                {params.api_base && !params.api_base.includes('host.docker.internal') && (
+                                {/* Endpoint Details */}
+                                {params.api_base && (
                                     <div style={{ padding: '0 0.2rem' }}>
                                         <span style={{ fontSize: '0.6rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', fontWeight: 500, display: 'block' }}>Endpoint</span>
                                         <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', fontFamily: 'monospace', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{params.api_base}</div>
