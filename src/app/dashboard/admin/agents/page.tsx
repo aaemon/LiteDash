@@ -135,8 +135,8 @@ export default function AdminAgentsPage() {
 
             {/* Modal */}
             {showModal && (
-                <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200 }} onClick={() => setShowModal(false)}>
-                    <div className="glass-card" style={{ width: '650px', maxHeight: '85vh', overflowY: 'auto', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }} onClick={e => e.stopPropagation()}>
+                <div className="modal-overlay" onClick={() => setShowModal(false)}>
+                    <div className="modal-card" style={{ width: '650px' }} onClick={e => e.stopPropagation()}>
                         <h3 style={{ fontWeight: 600, marginBottom: '1rem', fontSize: '1.05rem' }}>{editingId ? 'Edit Agent' : 'Create New Agent'}</h3>
                         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                             {/* Basic Info */}

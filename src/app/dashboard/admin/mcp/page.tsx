@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import type { FormEvent, CSSProperties } from 'react';
 
 const MCP_CATALOG = [
     {
@@ -146,7 +147,7 @@ export default function AdminMCPPage() {
         setFormAuthorizationUrl(''); setFormTokenUrl(''); setFormRegistrationUrl('');
     };
 
-    const handleAdd = async (e: React.FormEvent) => {
+    const handleAdd = async (e: FormEvent) => {
         e.preventDefault(); setSaving(true);
         try {
             const body: any = {
@@ -159,16 +160,16 @@ export default function AdminMCPPage() {
                 allow_all_keys: formAllowAllKeys,
                 available_on_public_internet: formAvailablePublic,
             };
-            if (formAccessGroups) body.mcp_access_groups = formAccessGroups.split(',').map(s => s.trim()).filter(Boolean);
-            if (formTeams) body.teams = formTeams.split(',').map(s => s.trim()).filter(Boolean);
-            if (formAllowedTools) body.allowed_tools = formAllowedTools.split(',').map(s => s.trim()).filter(Boolean);
+            if (formAccessGroups) body.mcp_access_groups = formAccessGroups.split(',').map((s: string) => s.trim()).filter(Boolean);
+            if (formTeams) body.teams = formTeams.split(',').map((s: string) => s.trim()).filter(Boolean);
+            if (formAllowedTools) body.allowed_tools = formAllowedTools.split(',').map((s: string) => s.trim()).filter(Boolean);
             if (formCredentials) { try { body.credentials = JSON.parse(formCredentials); } catch { body.credentials = { api_key: formCredentials }; } }
             if (formExtraHeaders) { try { body.extra_headers = JSON.parse(formExtraHeaders); } catch { } }
             if (formStaticHeaders) { try { body.static_headers = JSON.parse(formStaticHeaders); } catch { } }
             // StdIO fields
             if (formTransport === 'stdio') {
                 if (formCommand) body.command = formCommand;
-                if (formArgs) body.args = formArgs.split(',').map(s => s.trim()).filter(Boolean);
+                if (formArgs) body.args = formArgs.split(',').map((s: string) => s.trim()).filter(Boolean);
                 if (formEnv) { try { body.env = JSON.parse(formEnv); } catch { } }
             }
             // OAuth fields
@@ -216,9 +217,9 @@ export default function AdminMCPPage() {
         .filter(c => c.servers.length > 0);
 
     const healthColor = (s: string) => s === 'healthy' ? 'var(--success)' : s === 'unhealthy' ? 'var(--danger)' : 'var(--text-tertiary)';
-    const labelStyle: React.CSSProperties = { fontSize: '0.72rem', fontWeight: 500, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.04em' };
-    const fieldStyle: React.CSSProperties = { display: 'flex', flexDirection: 'column', gap: '0.3rem' };
-    const tabBtn = (t: string, active: boolean): React.CSSProperties => ({
+    const labelStyle: CSSProperties = { fontSize: '0.72rem', fontWeight: 500, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.04em' };
+    const fieldStyle: CSSProperties = { display: 'flex', flexDirection: 'column', gap: '0.3rem' };
+    const tabBtn = (t: string, active: boolean): CSSProperties => ({
         padding: '0.4rem 0.85rem', fontSize: '0.78rem', fontWeight: active ? 600 : 400,
         color: active ? 'var(--accent-primary)' : 'var(--text-secondary)',
         borderTop: 'none', borderLeft: 'none', borderRight: 'none',
@@ -253,8 +254,8 @@ export default function AdminMCPPage() {
 
             {/* Add Server Modal */}
             {showAddModal && (
-                <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200 }} onClick={() => setShowAddModal(false)}>
-                    <div className="glass-card" style={{ width: '580px', maxHeight: '85vh', overflowY: 'auto', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }} onClick={e => e.stopPropagation()}>
+                <div className="modal-overlay" onClick={() => setShowAddModal(false)}>
+                    <div className="modal-card" style={{ width: '580px' }} onClick={e => e.stopPropagation()}>
                         <h3 style={{ fontWeight: 600, marginBottom: '1rem', fontSize: '1.05rem' }}>Add MCP Server</h3>
                         <form onSubmit={handleAdd} className="flex flex-col gap-4">
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>

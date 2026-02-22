@@ -1,6 +1,5 @@
-'use client';
-
 import { useState, useEffect } from 'react';
+import type { FormEvent, CSSProperties } from 'react';
 
 export default function AdminModelsPage() {
     const [models, setModels] = useState<any[]>([]);
@@ -15,7 +14,6 @@ export default function AdminModelsPage() {
     const [adding, setAdding] = useState(false);
     const [sym, setSym] = useState('$');
     const [mul, setMul] = useState(1);
-    const [cur, setCur] = useState('USD');
 
     const fetchModels = async () => {
         try {
@@ -29,7 +27,6 @@ export default function AdminModelsPage() {
                 const s = await settingsRes.json();
                 if (s.currencySymbol) setSym(s.currencySymbol);
                 if (s.currencyMultiplier) setMul(s.currencyMultiplier);
-                if (s.currency) setCur(s.currency);
             }
         } catch (e) { console.error(e); }
         finally { setLoading(false); }
@@ -42,7 +39,7 @@ export default function AdminModelsPage() {
 
     useEffect(() => { fetchModels(); }, []);
 
-    const handleAdd = async (e: React.FormEvent) => {
+    const handleAdd = async (e: FormEvent) => {
         e.preventDefault(); setAdding(true);
         try {
             const res = await fetch('/api/admin/models', {
@@ -59,24 +56,18 @@ export default function AdminModelsPage() {
         finally { setAdding(false); }
     };
 
-    const handleDelete = async (id: string, name: string) => {
-        if (!confirm(`Delete model "${name}"?`)) return;
-        try {
-            const res = await fetch('/api/admin/models', {
-                method: 'DELETE', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id })
-            });
-            if (res.ok) fetchModels();
-            else { const err = await res.json(); alert(err.error || 'Failed'); }
-        } catch (e) { console.error(e); }
-    };
-
-    const labelStyle: React.CSSProperties = { fontSize: '0.72rem', color: 'var(--text-tertiary)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.04em' };
+    const labelStyle: CSSProperties = { fontSize: '0.72rem', color: 'var(--text-tertiary)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.04em' };
 
     const capBadge = (label: string, supported: boolean | null) => {
         if (!supported) return null;
         return <span key={label} style={{ fontSize: '0.58rem', padding: '0.1rem 0.3rem', borderRadius: 'var(--radius-full)', background: 'rgba(79, 110, 247, 0.08)', color: 'var(--accent-primary)', fontWeight: 600 }}>{label}</span>;
     };
+
+    // Filter out internal endpoints
+    const filteredModels = models.filter(m => {
+        const apiBase = m.litellm_params?.api_base || '';
+        return !apiBase.includes('host.docker.internal');
+    });
 
     return (
         <div className="flex flex-col gap-6">
@@ -84,7 +75,7 @@ export default function AdminModelsPage() {
                 <div className="page-header-actions">
                     <div>
                         <h1 style={{ marginBottom: '0.25rem' }}>Model Management</h1>
-                        <p>{models.length} model{models.length !== 1 ? 's' : ''} provisioned on this instance.</p>
+                        <p>{filteredModels.length} model{filteredModels.length !== 1 ? 's' : ''} provisioned on this instance.</p>
                     </div>
                     <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
                         {showForm ? 'Cancel' : '+ Add Model'}
@@ -94,8 +85,8 @@ export default function AdminModelsPage() {
 
             {/* Add Model Modal */}
             {showForm && (
-                <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200 }} onClick={() => setShowForm(false)}>
-                    <div className="glass-card modal-content" onClick={e => e.stopPropagation()}>
+                <div className="modal-overlay" onClick={() => setShowForm(false)}>
+                    <div className="modal-card modal-content" onClick={e => e.stopPropagation()}>
                         <h3 style={{ fontWeight: 600, marginBottom: '1rem' }}>Add New Model</h3>
                         <form onSubmit={handleAdd} className="flex flex-col gap-4">
                             <div className="responsive-grid-2">
@@ -137,14 +128,14 @@ export default function AdminModelsPage() {
 
             {loading ? (
                 <div style={{ color: 'var(--text-tertiary)', fontSize: '0.85rem' }}>Loading models...</div>
-            ) : models.length === 0 ? (
+            ) : filteredModels.length === 0 ? (
                 <div className="glass-card" style={{ textAlign: 'center', padding: '3rem' }}>
                     <h3 style={{ fontWeight: 600, marginBottom: '0.25rem' }}>No Models Configured</h3>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>Add your first model to get started.</p>
                 </div>
             ) : (
                 <div className="responsive-grid-2">
-                    {models.map((m, idx) => {
+                    {filteredModels.map((m, idx) => {
                         const info = m.model_info || {};
                         const params = m.litellm_params || {};
                         const capabilities = [
@@ -168,8 +159,8 @@ export default function AdminModelsPage() {
                                     <span style={{ fontSize: '0.62rem', background: 'rgba(34, 197, 94, 0.1)', color: 'var(--success)', padding: '0.12rem 0.4rem', borderRadius: 'var(--radius-full)', fontWeight: 600, textTransform: 'uppercase' }}>Active</span>
                                 </div>
 
-                                {/* Pricing */}
-                                <div style={{ display: 'flex', gap: '1rem', padding: '0.4rem 0.6rem', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)' }}>
+                                {/* Pricing + Context */}
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', padding: '0.4rem 0.6rem', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)' }}>
                                     <div>
                                         <span style={{ fontSize: '0.6rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', fontWeight: 500 }}>Input</span>
                                         <div style={{ fontSize: '0.78rem', fontWeight: 600 }}>{fmtPrice(info.input_cost_per_token || 0)}<span style={{ fontSize: '0.6rem', color: 'var(--text-tertiary)', fontWeight: 400 }}>/1M</span></div>
@@ -178,27 +169,31 @@ export default function AdminModelsPage() {
                                         <span style={{ fontSize: '0.6rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', fontWeight: 500 }}>Output</span>
                                         <div style={{ fontSize: '0.78rem', fontWeight: 600 }}>{fmtPrice(info.output_cost_per_token || 0)}<span style={{ fontSize: '0.6rem', color: 'var(--text-tertiary)', fontWeight: 400 }}>/1M</span></div>
                                     </div>
-                                    {params.api_base && (
-                                        <div style={{ marginLeft: 'auto' }}>
-                                            <span style={{ fontSize: '0.6rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', fontWeight: 500 }}>Endpoint</span>
-                                            <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', fontFamily: 'monospace', maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{params.api_base}</div>
-                                        </div>
-                                    )}
+                                    <div>
+                                        <span style={{ fontSize: '0.6rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', fontWeight: 500 }}>Context Window</span>
+                                        <div style={{ fontSize: '0.78rem', fontWeight: 600 }}>{info.max_input_tokens ? `${(info.max_input_tokens / 1000).toFixed(0)}k` : info.max_tokens ? `${(info.max_tokens / 1000).toFixed(0)}k` : 'N/A'}</div>
+                                    </div>
                                 </div>
+
+                                {/* Endpoint Details (Filtered) */}
+                                {params.api_base && !params.api_base.includes('host.docker.internal') && (
+                                    <div style={{ padding: '0 0.2rem' }}>
+                                        <span style={{ fontSize: '0.6rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', fontWeight: 500, display: 'block' }}>Endpoint</span>
+                                        <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', fontFamily: 'monospace', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{params.api_base}</div>
+                                    </div>
+                                )}
 
                                 {/* Capabilities */}
                                 {capabilities.length > 0 && (
                                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>{capabilities}</div>
                                 )}
 
-                                {/* Limits + Delete */}
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.7rem', color: 'var(--text-tertiary)' }}>
+                                {/* Limits */}
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.7rem', color: 'var(--text-tertiary)', borderTop: '1px solid var(--border-color)', paddingTop: '0.4rem' }}>
                                     <div style={{ display: 'flex', gap: '0.75rem' }}>
-                                        {info.max_tokens && <span>Max: {info.max_tokens.toLocaleString()} tok</span>}
                                         {info.tpm && <span>TPM: {info.tpm.toLocaleString()}</span>}
                                         {info.rpm && <span>RPM: {info.rpm}</span>}
                                     </div>
-                                    <button className="btn btn-outline" style={{ fontSize: '0.65rem', padding: '0.15rem 0.35rem', color: 'var(--danger)', borderColor: 'var(--danger)' }} onClick={() => handleDelete(info.id, m.model_name)}>Delete</button>
                                 </div>
                             </div>
                         );

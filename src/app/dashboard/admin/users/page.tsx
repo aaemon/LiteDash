@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import type { FormEvent, CSSProperties } from 'react';
 import { useCurrency } from '@/hooks/useCurrency';
 
 export default function AdminUsersPage() {
@@ -53,7 +54,7 @@ export default function AdminUsersPage() {
         setShowModal(true);
     };
 
-    const handleSave = async (e: React.FormEvent) => {
+    const handleSave = async (e: FormEvent) => {
         e.preventDefault(); setSaving(true);
         try {
             if (editUser) {
@@ -94,8 +95,8 @@ export default function AdminUsersPage() {
         } catch (e) { console.error(e); }
     };
 
-    const labelStyle: React.CSSProperties = { fontSize: '0.72rem', color: 'var(--text-tertiary)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.04em' };
-    const fieldStyle: React.CSSProperties = { display: 'flex', flexDirection: 'column', gap: '0.3rem' };
+    const labelStyle: CSSProperties = { fontSize: '0.72rem', color: 'var(--text-tertiary)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.04em' };
+    const fieldStyle: CSSProperties = { display: 'flex', flexDirection: 'column', gap: '0.3rem' };
 
     return (
         <div className="flex flex-col gap-6">
@@ -111,8 +112,8 @@ export default function AdminUsersPage() {
 
             {/* Floating Modal */}
             {showModal && (
-                <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200, animation: 'fadeIn 0.15s ease-out' }} onClick={() => setShowModal(false)}>
-                    <div className="glass-card modal-content" style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }} onClick={e => e.stopPropagation()}>
+                <div className="modal-overlay" onClick={() => setShowModal(false)}>
+                    <div className="modal-card modal-content" onClick={e => e.stopPropagation()}>
                         <h3 style={{ fontWeight: 600, marginBottom: '1rem', fontSize: '1.05rem' }}>
                             {editUser ? `Edit User — ${editUser.user_id}` : 'Create New User'}
                         </h3>
@@ -219,6 +220,14 @@ export default function AdminUsersPage() {
                     </div>
                 )}
             </div>
+            <style dangerouslySetInnerHTML={{
+                __html: `
+        @keyframes pulse {
+            0% { opacity: 0.6; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.1); }
+            100% { opacity: 0.6; transform: scale(0.9); }
+        }
+      `}} />
         </div>
     );
 }
