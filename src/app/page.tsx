@@ -193,7 +193,7 @@ export default function Home() {
               </div>
 
               <div className="responsive-grid-auto" style={{ gap: '1.5rem' }}>
-                {models.slice(0, 6).map((m, i) => {
+                {models.map((m, i) => {
                   const color = PROVIDER_COLORS[m.provider.toLowerCase()] || PROVIDER_COLORS.default;
                   return (
                     <div key={i} className="glass-card" style={{ padding: '2rem', minHeight: '220px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)' }}>
