@@ -9,11 +9,14 @@ export async function GET() {
         // Fetch /v1/models for the base list and /v1/model/info for pricing details
         const [modelsRes, infoRes] = await Promise.all([
             litellmFetch(`/v1/models`),
-            litellmFetch(`/v1/model/info`)
+            litellmFetch(`/v1/model/info`).catch(err => {
+                console.warn('[Models API] Failed to fetch pricing info:', err.message);
+                return { data: [] };
+            })
         ]);
 
         const models = modelsRes.data || [];
-        const modelInfoList = infoRes.data || [];
+        const modelInfoList = infoRes?.data || [];
 
         // Merge pricing data
         const enrichedModels = models.map((model: any) => {
@@ -27,6 +30,7 @@ export async function GET() {
 
         return NextResponse.json({ models: enrichedModels });
     } catch (err: any) {
+        console.error('[Models API] Terminal failure:', err.message);
         return NextResponse.json({ error: err.message }, { status: 500 });
     }
 }
