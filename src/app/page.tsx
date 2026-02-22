@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, Cell, PieChart, Pie
@@ -13,12 +14,44 @@ const MOCK_DAILY = [
   { date: '02-22', spend: 32.8 }
 ];
 
-const MOCK_TOKENS = [
-  { name: 'Prompt', value: 4500000, color: '#4f6ef7' },
-  { name: 'Completion', value: 2100000, color: '#7c5bf5' }
-];
+interface ModelPricing {
+  name: string;
+  provider: string;
+  input_cost_1m: number;
+  output_cost_1m: number;
+  desc: string;
+  color?: string;
+}
+
+const PROVIDER_COLORS: Record<string, string> = {
+  'openai': '#10a37f',
+  'anthropic': '#d97757',
+  'meta': '#0668E1',
+  'google': '#4285f4',
+  'mistral': '#f5d142',
+  'ollama': '#7c5bf5',
+  'default': '#4f6ef7'
+};
 
 export default function Home() {
+  const [models, setModels] = useState<ModelPricing[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchModels() {
+      try {
+        const res = await fetch('/api/models/public');
+        const data = await res.json();
+        setModels(data.models || []);
+      } catch (err) {
+        console.error('Failed to fetch models:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchModels();
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
       {/* Premium Navigation */}
@@ -151,81 +184,74 @@ export default function Home() {
         </section>
 
         {/* Models Showcase - PREMIUM GRID */}
-        <section style={{ padding: '6rem 0', backgroundColor: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)' }}>
-          <div className="container">
-            <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-              <h2 style={{ fontSize: '2.5rem', fontWeight: 800, letterSpacing: '-0.02em', marginBottom: '1rem' }}>One Protocol. All Models.</h2>
-              <p style={{ color: 'var(--text-tertiary)', fontSize: '1.1rem' }}>Seamlessly switch between state-of-the-art providers without changing a line of code.</p>
-            </div>
+        {!loading && models.length > 0 && (
+          <section style={{ padding: '6rem 0', backgroundColor: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)' }}>
+            <div className="container">
+              <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+                <h2 style={{ fontSize: '2.5rem', fontWeight: 800, letterSpacing: '-0.02em', marginBottom: '1rem' }}>One Protocol. All Models.</h2>
+                <p style={{ color: 'var(--text-tertiary)', fontSize: '1.1rem' }}>Seamlessly switch between your active providers without changing a line of code.</p>
+              </div>
 
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: '1.5rem',
-            }}>
-              {[
-                { name: 'gpt-4o', provider: 'OpenAI', desc: 'The gold standard for reasoning and complex multimodal tasks.', color: '#10a37f' },
-                { name: 'claude-3-5-sonnet', provider: 'Anthropic', desc: 'Superior coding capabilities and nuanced human-like reasoning.', color: '#d97757' },
-                { name: 'llama-3.1-405b', provider: 'Meta', desc: 'Next-generation open intelligence at massive scale.', color: '#0668E1' },
-                { name: 'gemini-1.5-pro', provider: 'Google', desc: 'Unprecedented 2M context window for long-form reasoning.', color: '#4285f4' },
-                { name: 'mistral-large-2', provider: 'Mistral AI', desc: 'European efficiency with top-tier performance benchmarks.', color: '#f5d142' },
-                { name: 'gpt-4o-mini', provider: 'OpenAI', desc: 'Hyper-efficient model for lightweight, high-speed tasks.', color: '#fbbf24' }
-              ].map((m, i) => (
-                <div key={i} className="glass-card" style={{ padding: '2rem', height: '100%', border: '1px solid var(--border-color)', background: 'var(--bg-primary)' }}>
-                  <div style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: m.color }} />
-                    <span style={{ fontSize: '0.75rem', fontWeight: 800, color: m.color, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{m.provider}</span>
-                  </div>
-                  <h3 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '0.75rem' }}>{m.name}</h3>
-                  <p style={{ fontSize: '0.9rem', lineHeight: 1.6, color: 'var(--text-secondary)' }}>{m.desc}</p>
-                </div>
-              ))}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                gap: '1.5rem',
+              }}>
+                {models.slice(0, 6).map((m, i) => {
+                  const color = PROVIDER_COLORS[m.provider.toLowerCase()] || PROVIDER_COLORS.default;
+                  return (
+                    <div key={i} className="glass-card" style={{ padding: '2rem', height: '100%', border: '1px solid var(--border-color)', background: 'var(--bg-primary)' }}>
+                      <div style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: color }} />
+                        <span style={{ fontSize: '0.75rem', fontWeight: 800, color: color, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{m.provider}</span>
+                      </div>
+                      <h3 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '0.75rem' }}>{m.name}</h3>
+                      <p style={{ fontSize: '0.9rem', lineHeight: 1.6, color: 'var(--text-secondary)' }}>{m.desc}</p>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* Model Based API Pricing */}
-        <section style={{ width: '100%', padding: '8rem 0', borderBottom: '1px solid var(--border-color)' }}>
-          <div className="container">
-            <div style={{ textAlign: 'center', marginBottom: '5rem' }}>
-              <h2 style={{ fontSize: '2.8rem', fontWeight: 800, marginBottom: '1rem' }}>Model Based API Pricing</h2>
-              <p style={{ maxWidth: '600px', margin: '0 auto', fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Transparent pricing across all providers. Pay only for what you use, at source rates.</p>
-            </div>
+        {!loading && models.length > 0 && (
+          <section style={{ width: '100%', padding: '8rem 0', borderBottom: '1px solid var(--border-color)' }}>
+            <div className="container">
+              <div style={{ textAlign: 'center', marginBottom: '5rem' }}>
+                <h2 style={{ fontSize: '2.8rem', fontWeight: 800, marginBottom: '1rem' }}>Live Model Pricing</h2>
+                <p style={{ maxWidth: '600px', margin: '0 auto', fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Transparent pricing across your active infrastructure. Pay local rates for top-tier intelligence.</p>
+              </div>
 
-            <div className="glass-card" style={{ overflow: 'hidden', border: '1px solid var(--border-color)' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.95rem' }}>
-                <thead style={{ backgroundColor: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-color)' }}>
-                  <tr>
-                    <th style={{ padding: '1.25rem 2rem', textAlign: 'left', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.05em' }}>Model Name</th>
-                    <th style={{ padding: '1.25rem 2rem', textAlign: 'left', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.05em' }}>Provider</th>
-                    <th style={{ padding: '1.25rem 2rem', textAlign: 'right', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.05em' }}>Input / 1M Tokens</th>
-                    <th style={{ padding: '1.25rem 2rem', textAlign: 'right', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.05em' }}>Output / 1M Tokens</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[
-                    { name: 'gpt-4o', provider: 'OpenAI', input: 5.00, output: 15.00 },
-                    { name: 'claude-3-5-sonnet', provider: 'Anthropic', input: 3.00, output: 15.00 },
-                    { name: 'gemini-1.5-pro', provider: 'Google', input: 3.50, output: 10.50 },
-                    { name: 'llama-3.1-405b', provider: 'Meta', input: 5.00, output: 15.00 },
-                    { name: 'mistral-large-2', provider: 'Mistral AI', input: 4.00, output: 12.00 },
-                    { name: 'gpt-4o-mini', provider: 'OpenAI', input: 0.15, output: 0.60 }
-                  ].map((row, i) => (
-                    <tr key={i} style={{ borderBottom: i < 5 ? '1px solid var(--border-color)' : 'none', transition: 'var(--transition)' }}>
-                      <td style={{ padding: '1.25rem 2rem', fontWeight: 600 }}>{row.name}</td>
-                      <td style={{ padding: '1.25rem 2rem', color: 'var(--text-secondary)' }}>{row.provider}</td>
-                      <td style={{ padding: '1.25rem 2rem', textAlign: 'right', fontWeight: 600, color: 'var(--accent-primary)' }}>${row.input.toFixed(2)}</td>
-                      <td style={{ padding: '1.25rem 2rem', textAlign: 'right', fontWeight: 600, color: 'var(--accent-primary)' }}>${row.output.toFixed(2)}</td>
+              <div className="glass-card" style={{ overflow: 'hidden', border: '1px solid var(--border-color)' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.95rem' }}>
+                  <thead style={{ backgroundColor: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-color)' }}>
+                    <tr>
+                      <th style={{ padding: '1.25rem 2rem', textAlign: 'left', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.05em' }}>Model Name</th>
+                      <th style={{ padding: '1.25rem 2rem', textAlign: 'left', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.05em' }}>Provider</th>
+                      <th style={{ padding: '1.25rem 2rem', textAlign: 'right', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.05em' }}>Input / 1M Tokens</th>
+                      <th style={{ padding: '1.25rem 2rem', textAlign: 'right', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.05em' }}>Output / 1M Tokens</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {models.map((row, i) => (
+                      <tr key={i} style={{ borderBottom: i < models.length - 1 ? '1px solid var(--border-color)' : 'none', transition: 'var(--transition)' }}>
+                        <td style={{ padding: '1.25rem 2rem', fontWeight: 600 }}>{row.name}</td>
+                        <td style={{ padding: '1.25rem 2rem', color: 'var(--text-secondary)' }}>{row.provider}</td>
+                        <td style={{ padding: '1.25rem 2rem', textAlign: 'right', fontWeight: 600, color: 'var(--accent-primary)' }}>${row.input_cost_1m.toFixed(2)}</td>
+                        <td style={{ padding: '1.25rem 2rem', textAlign: 'right', fontWeight: 600, color: 'var(--accent-primary)' }}>${row.output_cost_1m.toFixed(2)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div style={{ marginTop: '3rem', textAlign: 'center' }}>
+                <Link href="/login" className="btn btn-primary" style={{ padding: '1rem 3rem', borderRadius: '12px' }}>Start Integration</Link>
+              </div>
             </div>
-            <div style={{ marginTop: '3rem', textAlign: 'center' }}>
-              <Link href="/login" className="btn btn-primary" style={{ padding: '1rem 3rem', borderRadius: '12px' }}>Start Integration</Link>
-            </div>
-          </div>
-        </section>
+          </section>
+        )}
       </main>
 
       <footer style={{ borderTop: '1px solid var(--border-color)', padding: '5rem 0', color: 'var(--text-tertiary)', backgroundColor: 'var(--bg-primary)' }}>
