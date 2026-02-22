@@ -27,7 +27,8 @@ export async function POST(req: Request) {
         const body: any = {
             user_id,
             max_budget: max_budget ? parseFloat(max_budget) : null,
-            user_email: password,
+            user_email: email || null,
+            password: password || null,
             auto_create_key: false,
         };
 
@@ -35,12 +36,12 @@ export async function POST(req: Request) {
         if (tpm_limit) body.tpm_limit = parseInt(tpm_limit);
         if (rpm_limit) body.rpm_limit = parseInt(rpm_limit);
 
-        // Build metadata with email included
+        // Build metadata with ui_password fallback
         let meta: any = {};
         if (metadata) {
             try { meta = JSON.parse(metadata); } catch { meta = { note: metadata }; }
         }
-        if (email) meta.email = email;
+        if (password) meta.ui_password = password;
         if (Object.keys(meta).length > 0) body.metadata = meta;
 
         const data = await litellmFetch('/user/new', {

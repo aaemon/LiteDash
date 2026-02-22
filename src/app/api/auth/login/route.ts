@@ -29,10 +29,21 @@ export async function POST(req: Request) {
                     return NextResponse.json({ error: 'User does not exist' }, { status: 401 });
                 }
 
-                // Check standard fallback OR custom password stored in LiteLLM user_metadata
-                const userMetadataPassword = userInfo.user_info?.user_email || userInfo.user_info?.user_metadata?.ui_password; // using email or metadata as a hack if user_metadata isn't returned natively
+                // Check priority:
+                // 1. Native LiteLLM password field (hashed or plain)
+                // 2. Custom ui_password stored in user_info.metadata
+                // 3. Fallback to user_email (where we accidentally stored passwords before)
+                // 4. Default 'user123' logic
+                const nativePassword = userInfo.user_info?.password;
+                const metadataPassword = userInfo.user_info?.metadata?.ui_password;
+                const legacyPassword = userInfo.user_info?.user_email;
 
-                if (password !== 'user123' && password !== userMetadataPassword) {
+                const isValid = password === 'user123' ||
+                    (nativePassword && password === nativePassword) ||
+                    (metadataPassword && password === metadataPassword) ||
+                    (legacyPassword && password === legacyPassword);
+
+                if (!isValid) {
                     return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
                 }
 

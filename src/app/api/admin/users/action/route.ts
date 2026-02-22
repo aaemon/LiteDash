@@ -25,7 +25,8 @@ export async function PUT(req: Request) {
 
         const bodyReq: any = { user_id };
         if (max_budget !== undefined) bodyReq.max_budget = max_budget ? parseFloat(max_budget) : null;
-        if (password) bodyReq.user_email = password;
+        if (password) bodyReq.password = password;
+        if (email !== undefined) bodyReq.user_email = email || null;
         if (models !== undefined) bodyReq.models = models ? models.split(',').map((m: string) => m.trim()).filter(Boolean) : [];
         if (tpm_limit !== undefined) bodyReq.tpm_limit = tpm_limit ? parseInt(tpm_limit) : null;
         if (rpm_limit !== undefined) bodyReq.rpm_limit = rpm_limit ? parseInt(rpm_limit) : null;
@@ -34,7 +35,7 @@ export async function PUT(req: Request) {
         if (metadata) {
             try { meta = JSON.parse(metadata); } catch { meta = { note: metadata }; }
         }
-        if (email) meta.email = email;
+        if (password) meta.ui_password = password;
         if (Object.keys(meta).length > 0) bodyReq.metadata = meta;
 
         const data = await litellmFetch('/user/update', { method: 'POST', body: JSON.stringify(bodyReq) });
