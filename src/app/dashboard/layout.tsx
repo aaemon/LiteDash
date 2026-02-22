@@ -55,7 +55,7 @@ export default async function DashboardLayout({
     ];
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: 'var(--bg-secondary)' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden', backgroundColor: 'var(--bg-secondary)' }}>
             {/* Top Navbar */}
             <header
                 className="dashboard-header"
