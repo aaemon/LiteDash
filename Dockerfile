@@ -18,22 +18,15 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Create non-root user
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nextjs
-
 # Copy built assets
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-# Create config directory for volume mount
-RUN mkdir -p /app/config && chown -R nextjs:nodejs /app/config
+# Create config directory for volume mount and ensure node user has access
+RUN mkdir -p /app/config && chown -R node:node /app/config
 
-# Copy default config
-COPY --from=builder /app/config ./config
-
-USER nextjs
+USER node
 
 EXPOSE 3000
 
