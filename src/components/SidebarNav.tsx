@@ -15,6 +15,13 @@ export default function SidebarNav({ navItems }: { navItems: { name: string, hre
                         key={item.href}
                         href={item.href}
                         className={`nav-link ${isActive ? 'active' : ''}`}
+                        onClick={() => {
+                            // Close mobile sidebar on navigation
+                            const sidebar = document.getElementById('sidebar');
+                            const overlay = document.getElementById('sidebar-overlay');
+                            sidebar?.classList.remove('sidebar-open');
+                            overlay?.classList.remove('sidebar-open');
+                        }}
                         style={{
                             padding: '0.55rem 0.75rem',
                             borderRadius: 'var(--radius-md)',

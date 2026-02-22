@@ -4,6 +4,7 @@ import { getSession } from '@/lib/litellm';
 import ThemeToggle from '@/components/ThemeToggle';
 import SidebarNav from '@/components/SidebarNav';
 import UserAvatar from '@/components/UserAvatar';
+import MobileMenuButton from '@/components/MobileMenuButton';
 import fs from 'fs';
 import path from 'path';
 
@@ -57,6 +58,7 @@ export default async function DashboardLayout({
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: 'var(--bg-secondary)' }}>
             {/* Top Navbar */}
             <header
+                className="dashboard-header"
                 style={{
                     width: '100%',
                     borderBottom: '1px solid var(--border-color)',
@@ -75,6 +77,7 @@ export default async function DashboardLayout({
             >
                 {/* Brand */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                    <MobileMenuButton />
                     {logoUrl ? (
                         <img src={logoUrl} alt={appName} style={{ width: '26px', height: '26px', borderRadius: 'var(--radius-sm)', objectFit: 'contain' }} />
                     ) : (
@@ -101,23 +104,12 @@ export default async function DashboardLayout({
             {/* Layout Wrapper */}
             <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
                 {/* Left Sidebar */}
-                <aside
-                    style={{
-                        width: '220px',
-                        minWidth: '220px',
-                        borderRight: '1px solid var(--border-color)',
-                        background: 'var(--bg-primary)',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        overflowY: 'auto',
-                        padding: '1.25rem 0.75rem',
-                    }}
-                >
+                <aside id="sidebar" className="sidebar">
                     <SidebarNav navItems={navItems} />
                 </aside>
 
                 {/* Main Content */}
-                <main style={{ flex: 1, padding: '1.75rem 2.5rem', overflowY: 'auto' }} className="animate-fade-in">
+                <main className="main-content animate-fade-in">
                     <div className="container">
                         {children}
                     </div>

@@ -113,7 +113,7 @@ export default function LogsPage() {
             ) : (
                 <>
                     {/* Filters & Info Bar */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <div className="filter-bar">
                         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                             <input className="input" placeholder="Filter by model..." value={searchModel} onChange={e => setSearchModel(e.target.value)} style={{ width: '200px', fontSize: '0.78rem' }} />
                             <select className="input" value={statusFilter} onChange={e => setStatusFilter(e.target.value as any)} style={{ width: '120px', fontSize: '0.78rem' }}>

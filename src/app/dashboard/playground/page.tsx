@@ -41,7 +41,7 @@ export default function PlaygroundPage() {
                 <p>Test your API keys directly against active models.</p>
             </header>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', flex: 1, minHeight: 0 }}>
+            <div className="playground-grid">
                 {/* Controls */}
                 <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', overflowY: 'auto' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>

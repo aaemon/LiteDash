@@ -65,7 +65,7 @@ export default async function DashboardOverview() {
                 <p>Here's an overview of your AI resources.</p>
             </header>
 
-            <div style={{ display: 'grid', gridTemplateColumns: `repeat(${statCards.length}, minmax(0, 1fr))`, gap: '1rem' }}>
+            <div className="responsive-grid-auto">
                 {statCards.map((card, i) => (
                     <StatCard key={i} label={card.label} value={card.value} color={card.color} />
                 ))}

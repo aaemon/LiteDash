@@ -81,7 +81,7 @@ export default function AdminModelsPage() {
     return (
         <div className="flex flex-col gap-6">
             <header>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div className="page-header-actions">
                     <div>
                         <h1 style={{ marginBottom: '0.25rem' }}>Model Management</h1>
                         <p>{models.length} model{models.length !== 1 ? 's' : ''} provisioned on this instance.</p>
@@ -95,10 +95,10 @@ export default function AdminModelsPage() {
             {/* Add Model Modal */}
             {showForm && (
                 <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200 }} onClick={() => setShowForm(false)}>
-                    <div className="glass-card" style={{ width: '520px', maxHeight: '90vh', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
+                    <div className="glass-card modal-content" onClick={e => e.stopPropagation()}>
                         <h3 style={{ fontWeight: 600, marginBottom: '1rem' }}>Add New Model</h3>
                         <form onSubmit={handleAdd} className="flex flex-col gap-4">
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                            <div className="responsive-grid-2">
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                                     <label style={labelStyle}>Model Name *</label>
                                     <input className="input" placeholder="e.g. gpt-4o" value={modelName} onChange={e => setModelName(e.target.value)} required />
@@ -116,7 +116,7 @@ export default function AdminModelsPage() {
                                 <label style={labelStyle}>API Key</label>
                                 <input className="input" type="password" placeholder="sk-... (optional)" value={apiKey} onChange={e => setApiKey(e.target.value)} />
                             </div>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                            <div className="responsive-grid-2">
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                                     <label style={labelStyle}>TPM Limit</label>
                                     <input className="input" type="number" placeholder="100000" value={tpm} onChange={e => setTpm(e.target.value)} />
@@ -143,7 +143,7 @@ export default function AdminModelsPage() {
                     <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>Add your first model to get started.</p>
                 </div>
             ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '1rem' }}>
+                <div className="responsive-grid-2">
                     {models.map((m, idx) => {
                         const info = m.model_info || {};
                         const params = m.litellm_params || {};

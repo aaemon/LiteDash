@@ -119,7 +119,7 @@ export default function AdminSettingsPage() {
                 <div className="glass-card flex flex-col gap-4">
                     <h3 style={{ fontWeight: 600 }}>Branding</h3>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                    <div className="responsive-grid-2">
                         <div style={fieldStyle}>
                             <label style={labelStyle}>Application Name</label>
                             <input className="input" placeholder="LiteLLM Portal" value={appName} onChange={e => setAppName(e.target.value)} />
@@ -162,7 +162,7 @@ export default function AdminSettingsPage() {
                         LiteLLM tracks costs in USD. Choose your display currency and multiplier to show converted amounts across the dashboard.
                     </p>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
+                    <div className="responsive-grid-3">
                         <div style={fieldStyle}>
                             <label style={labelStyle}>Display Currency</label>
                             <select className="input" value={currency} onChange={e => handleCurrencyChange(e.target.value)}>

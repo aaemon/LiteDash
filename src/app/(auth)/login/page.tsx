@@ -61,7 +61,7 @@ export default function LoginPage() {
                 <form onSubmit={handleLogin} style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                         <label htmlFor="username" style={{ fontSize: '0.72rem', fontWeight: 500, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Username</label>
-                        <input id="username" type="text" className="input" placeholder="admin or user ID" value={username} onChange={(e) => setUsername(e.target.value)} required />
+                        <input id="username" type="text" className="input" placeholder="User ID" value={username} onChange={(e) => setUsername(e.target.value)} required />
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
@@ -74,9 +74,7 @@ export default function LoginPage() {
                     </button>
                 </form>
 
-                <p style={{ marginTop: '1.5rem', fontSize: '0.7rem', color: 'var(--text-tertiary)', textAlign: 'center', lineHeight: 1.5 }}>
-                    Default password: <code style={{ background: 'var(--bg-secondary)', padding: '0.1rem 0.35rem', borderRadius: '3px', fontSize: '0.68rem' }}>user123</code>
-                </p>
+
             </div>
         </div>
     );

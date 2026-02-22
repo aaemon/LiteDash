@@ -98,7 +98,7 @@ export default function AdminUsersPage() {
     return (
         <div className="flex flex-col gap-6">
             <header>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div className="page-header-actions">
                     <div>
                         <h1 style={{ marginBottom: '0.25rem' }}>Users & Budgets</h1>
                         <p>Manage portal users, allocate budgets, and configure access controls.</p>
@@ -110,13 +110,13 @@ export default function AdminUsersPage() {
             {/* Floating Modal */}
             {showModal && (
                 <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200, animation: 'fadeIn 0.15s ease-out' }} onClick={() => setShowModal(false)}>
-                    <div className="glass-card" style={{ width: '560px', maxHeight: '85vh', overflowY: 'auto', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }} onClick={e => e.stopPropagation()}>
+                    <div className="glass-card modal-content" style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }} onClick={e => e.stopPropagation()}>
                         <h3 style={{ fontWeight: 600, marginBottom: '1rem', fontSize: '1.05rem' }}>
                             {editUser ? `Edit User — ${editUser.user_id}` : 'Create New User'}
                         </h3>
                         <form onSubmit={handleSave} className="flex flex-col gap-4">
                             {/* Core fields */}
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                            <div className="responsive-grid-2">
                                 <div style={fieldStyle}>
                                     <label style={labelStyle}>User ID *</label>
                                     <input className="input" placeholder="e.g. dev-team-a" value={formUserId} onChange={e => setFormUserId(e.target.value)} required disabled={!!editUser} style={editUser ? { opacity: 0.6 } : {}} />
@@ -127,7 +127,7 @@ export default function AdminUsersPage() {
                                 </div>
                             </div>
 
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                            <div className="responsive-grid-2">
                                 <div style={fieldStyle}>
                                     <label style={labelStyle}>{editUser ? 'New Password' : 'Password *'}</label>
                                     <input className="input" type="text" placeholder={editUser ? 'Leave blank to keep' : 'Enter password'} value={formPassword} onChange={e => setFormPassword(e.target.value)} required={!editUser} />
@@ -141,7 +141,7 @@ export default function AdminUsersPage() {
                             {/* Advanced section */}
                             <div style={{ padding: '0.75rem', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                                 <span style={{ ...labelStyle, color: 'var(--accent-primary)' }}>Access Controls</span>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
+                                <div className="responsive-grid-3">
                                     <div style={fieldStyle}>
                                         <label style={labelStyle}>Allowed Models</label>
                                         <input className="input" placeholder="model1, model2" value={formModels} onChange={e => setFormModels(e.target.value)} />

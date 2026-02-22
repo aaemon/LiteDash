@@ -48,7 +48,7 @@ export default function AdminGuardrailsPage() {
                     </div>
                 </div>
             ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '1rem' }}>
+                <div className="responsive-grid-2">
                     {guardrails.map((g: any, idx: number) => {
                         const mode = g.litellm_params?.mode || g.mode || 'pre_call';
                         const modeColor = mode === 'pre_call' ? '#4f6ef7' : mode === 'post_call' ? '#22c55e' : '#f59e0b';

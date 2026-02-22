@@ -70,7 +70,7 @@ export default function UsagePage() {
             ) : (
                 <>
                     {/* Top Stats */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '1rem' }}>
+                    <div className="responsive-grid-4">
                         {[
                             { label: 'Total Spend', value: fmt(totalSpend), color: '#4f6ef7' },
                             { label: 'Total Requests', value: logs.length, color: '#7c5bf5' },
@@ -127,7 +127,7 @@ export default function UsagePage() {
                     </div>
 
                     {/* Token Breakdown + Model Breakdown */}
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div className="responsive-grid-2">
                         {/* Token Split */}
                         <div className="glass-card">
                             <h3 style={{ fontWeight: 600, marginBottom: '0.75rem' }}>Token Breakdown</h3>
@@ -174,7 +174,7 @@ export default function UsagePage() {
                     {/* Request Stats */}
                     <div className="glass-card">
                         <h3 style={{ fontWeight: 600, marginBottom: '0.5rem' }}>Request Summary</h3>
-                        <div style={{ display: 'flex', gap: '2rem', fontSize: '0.78rem' }}>
+                        <div className="request-summary-stats" style={{ display: 'flex', gap: '2rem', fontSize: '0.78rem' }}>
                             <div><span style={{ color: 'var(--text-tertiary)' }}>Success:</span> <span style={{ fontWeight: 600, color: 'var(--success)' }}>{successCount}</span></div>
                             <div><span style={{ color: 'var(--text-tertiary)' }}>Failed:</span> <span style={{ fontWeight: 600, color: failCount > 0 ? 'var(--danger)' : 'var(--text-secondary)' }}>{failCount}</span></div>
                             <div><span style={{ color: 'var(--text-tertiary)' }}>Avg Tokens/Req:</span> <span style={{ fontWeight: 600 }}>{logs.length ? Math.round(totalTokens / logs.length).toLocaleString() : 0}</span></div>
