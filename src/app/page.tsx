@@ -36,20 +36,26 @@ const PROVIDER_COLORS: Record<string, string> = {
 export default function Home() {
   const [models, setModels] = useState<ModelPricing[]>([]);
   const [loading, setLoading] = useState(true);
+  const [settings, setSettings] = useState({ appName: 'LiteDash', logoUrl: '' });
 
   useEffect(() => {
-    async function fetchModels() {
+    async function fetchData() {
       try {
-        const res = await fetch('/api/models/public');
-        const data = await res.json();
-        setModels(data.models || []);
+        const [modelsRes, settingsRes] = await Promise.all([
+          fetch('/api/models/public'),
+          fetch('/api/settings')
+        ]);
+        const modelsData = await modelsRes.json();
+        const settingsData = await settingsRes.json();
+        setModels(modelsData.models || []);
+        setSettings(settingsData);
       } catch (err) {
-        console.error('Failed to fetch models:', err);
+        console.error('Fetch error:', err);
       } finally {
         setLoading(false);
       }
     }
-    fetchModels();
+    fetchData();
   }, []);
 
   return (
@@ -67,8 +73,14 @@ export default function Home() {
       }}>
         <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
           <div className="flex items-center gap-3">
-            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--accent-gradient)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: '1.2rem' }}>L</div>
-            <span style={{ fontWeight: 700, fontSize: '1.25rem', letterSpacing: '-0.03em' }}>LiteDash</span>
+            {settings.logoUrl ? (
+              <img src={settings.logoUrl} alt={settings.appName} style={{ width: '36px', height: '36px', borderRadius: '10px', objectFit: 'contain' }} />
+            ) : (
+              <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--accent-gradient)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: '1.2rem' }}>
+                {settings.appName.charAt(0)}
+              </div>
+            )}
+            <span style={{ fontWeight: 700, fontSize: '1.25rem', letterSpacing: '-0.03em' }}>{settings.appName}</span>
           </div>
           <div className="flex items-center gap-4" style={{ gap: 'clamp(1rem, 4vw, 2.5rem)' }}>
             <Link href="/docs" className="nav-link mobile-hide" style={{ fontSize: '0.9rem', fontWeight: 600 }}>Documentation</Link>

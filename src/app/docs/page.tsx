@@ -1,12 +1,26 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { API_DATA, API_CATEGORIES, APIEndpoint } from './api-data';
 
 export default function DocsPage() {
     const [activeSection, setActiveSection] = useState('introduction');
     const [selectedEndpoint, setSelectedEndpoint] = useState<APIEndpoint | null>(null);
+    const [settings, setSettings] = useState({ appName: 'LiteDash', logoUrl: '' });
+
+    useEffect(() => {
+        async function fetchSettings() {
+            try {
+                const res = await fetch('/api/settings');
+                const data = await res.json();
+                setSettings(data);
+            } catch (err) {
+                console.error('Settings fetch error:', err);
+            }
+        }
+        fetchSettings();
+    }, []);
 
     const scrollToSection = (id: string) => {
         setActiveSection(id);
@@ -32,8 +46,14 @@ export default function DocsPage() {
             }}>
                 <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Link href="/" className="flex items-center gap-2" style={{ textDecoration: 'none' }}>
-                        <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: 'var(--accent-gradient)' }} />
-                        <span style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--text-primary)' }}>LiteDash</span>
+                        {settings.logoUrl ? (
+                            <img src={settings.logoUrl} alt={settings.appName} style={{ width: '28px', height: '28px', borderRadius: '6px', objectFit: 'contain' }} />
+                        ) : (
+                            <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: 'var(--accent-gradient)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '0.9rem', fontWeight: 800 }}>
+                                {settings.appName.charAt(0)}
+                            </div>
+                        )}
+                        <span style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--text-primary)' }}>{settings.appName}</span>
                         <span style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', fontWeight: 500, paddingLeft: '0.5rem', borderLeft: '1px solid var(--border-color)' }}>Documentation</span>
                     </Link>
                     <Link href="/login" className="btn btn-primary">Sign In</Link>
