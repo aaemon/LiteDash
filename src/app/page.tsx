@@ -30,16 +30,16 @@ export default function Home() {
         backgroundColor: 'var(--bg-elevated)',
         backdropFilter: 'blur(24px)',
         borderBottom: '1px solid var(--border-color)',
-        padding: '1rem 0'
+        padding: '1.25rem 0'
       }}>
         <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div className="flex items-center gap-3">
             <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--accent-gradient)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: '1.2rem' }}>L</div>
             <span style={{ fontWeight: 700, fontSize: '1.25rem', letterSpacing: '-0.03em' }}>LiteDash</span>
           </div>
-          <div className="flex items-center gap-8">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
             <Link href="/docs" className="nav-link" style={{ fontSize: '0.9rem', fontWeight: 600 }}>Documentation</Link>
-            <Link href="/login" className="btn btn-primary" style={{ padding: '0.6rem 1.5rem' }}>Open Dashboard</Link>
+            <Link href="/login" className="btn btn-primary" style={{ padding: '0.6rem 1.5rem', display: 'flex', alignItems: 'center' }}>Open Dashboard</Link>
           </div>
         </div>
       </nav>
@@ -184,99 +184,68 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Pricing & Benefits - SaaS STYLE */}
+        {/* Model Based API Pricing */}
         <section style={{ width: '100%', padding: '8rem 0', borderBottom: '1px solid var(--border-color)' }}>
           <div className="container">
             <div style={{ textAlign: 'center', marginBottom: '5rem' }}>
-              <h2 style={{ fontSize: '2.8rem', fontWeight: 800, marginBottom: '1rem' }}>Built for Scale.</h2>
-              <p style={{ maxWidth: '600px', margin: '0 auto', fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Transparent management for teams of all sizes. From startup to global enterprise.</p>
+              <h2 style={{ fontSize: '2.8rem', fontWeight: 800, marginBottom: '1rem' }}>Model Based API Pricing</h2>
+              <p style={{ maxWidth: '600px', margin: '0 auto', fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Transparent pricing across all providers. Pay only for what you use, at source rates.</p>
             </div>
 
-            <div className="responsive-grid-3" style={{ gap: '2rem', alignItems: 'start' }}>
-              {/* Free Tier */}
-              <div className="glass-card" style={{ padding: '3rem 2rem', border: '1px solid var(--border-color)' }}>
-                <h4 style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '1rem', color: 'var(--text-tertiary)' }}>Open Source</h4>
-                <div style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '1.5rem' }}>$0 <span style={{ fontSize: '1rem', color: 'var(--text-tertiary)', fontWeight: 500 }}>/ month</span></div>
-                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 2.5rem 0', display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.95rem' }}>
-                  <li style={{ display: 'flex', gap: '0.75rem' }}>✅ Unified API Endpoint</li>
-                  <li style={{ display: 'flex', gap: '0.75rem' }}>✅ Basic Observability</li>
-                  <li style={{ display: 'flex', gap: '0.75rem' }}>✅ Community Support</li>
-                  <li style={{ display: 'flex', gap: '0.75rem' }}>✅ Self-Hosted</li>
-                </ul>
-                <Link href="/login" className="btn btn-outline w-full" style={{ padding: '0.8rem' }}>Deploy Now</Link>
-              </div>
-
-              {/* Pro Tier (Featured) */}
-              <div className="glass-card" style={{ padding: '3.5rem 2rem', border: '2px solid var(--accent-primary)', transform: 'scale(1.05)', boxShadow: 'var(--shadow-lg)' }}>
-                <div style={{ position: 'absolute', top: '1.25rem', right: '1.25rem', padding: '0.25rem 0.75rem', background: 'var(--accent-primary)', color: '#fff', fontSize: '0.7rem', fontWeight: 700, borderRadius: '20px' }}>POPULAR</div>
-                <h4 style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '1rem', color: 'var(--accent-primary)' }}>Pro Dashboard</h4>
-                <div style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '1.5rem' }}>$49 <span style={{ fontSize: '1rem', color: 'var(--text-tertiary)', fontWeight: 500 }}>/ month</span></div>
-                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 2.5rem 0', display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '1rem' }}>
-                  <li style={{ display: 'flex', gap: '0.75rem' }}>✅ Advanced RBAC Controls</li>
-                  <li style={{ display: 'flex', gap: '0.75rem' }}>✅ Granular Budget Guards</li>
-                  <li style={{ display: 'flex', gap: '0.75rem' }}>✅ Real-time Cost Analytics</li>
-                  <li style={{ display: 'flex', gap: '0.75rem' }}>✅ Custom MCP Servers</li>
-                  <li style={{ display: 'flex', gap: '0.75rem' }}>✅ Priority Feature Access</li>
-                </ul>
-                <Link href="/login" className="btn btn-primary w-full" style={{ padding: '1rem' }}>Start Free Trial</Link>
-              </div>
-
-              {/* Enterprise Tier */}
-              <div className="glass-card" style={{ padding: '3rem 2rem', border: '1px solid var(--border-color)' }}>
-                <h4 style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '1rem', color: 'var(--text-tertiary)' }}>Enterprise</h4>
-                <div style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '1.5rem' }}>Custom</div>
-                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 2.5rem 0', display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.95rem' }}>
-                  <li style={{ display: 'flex', gap: '0.75rem' }}>✅ SOC2 / Compliance focus</li>
-                  <li style={{ display: 'flex', gap: '0.75rem' }}>✅ 24/7 Dedicated Support</li>
-                  <li style={{ display: 'flex', gap: '0.75rem' }}>✅ Private Cloud Deployment</li>
-                  <li style={{ display: 'flex', gap: '0.75rem' }}>✅ Custom Integrations</li>
-                </ul>
-                <button className="btn btn-outline w-full" style={{ padding: '0.8rem' }}>Contact Sales</button>
-              </div>
+            <div className="glass-card" style={{ overflow: 'hidden', border: '1px solid var(--border-color)' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.95rem' }}>
+                <thead style={{ backgroundColor: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-color)' }}>
+                  <tr>
+                    <th style={{ padding: '1.25rem 2rem', textAlign: 'left', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.05em' }}>Model Name</th>
+                    <th style={{ padding: '1.25rem 2rem', textAlign: 'left', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.05em' }}>Provider</th>
+                    <th style={{ padding: '1.25rem 2rem', textAlign: 'right', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.05em' }}>Input / 1M Tokens</th>
+                    <th style={{ padding: '1.25rem 2rem', textAlign: 'right', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.05em' }}>Output / 1M Tokens</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { name: 'gpt-4o', provider: 'OpenAI', input: 5.00, output: 15.00 },
+                    { name: 'claude-3-5-sonnet', provider: 'Anthropic', input: 3.00, output: 15.00 },
+                    { name: 'gemini-1.5-pro', provider: 'Google', input: 3.50, output: 10.50 },
+                    { name: 'llama-3.1-405b', provider: 'Meta', input: 5.00, output: 15.00 },
+                    { name: 'mistral-large-2', provider: 'Mistral AI', input: 4.00, output: 12.00 },
+                    { name: 'gpt-4o-mini', provider: 'OpenAI', input: 0.15, output: 0.60 }
+                  ].map((row, i) => (
+                    <tr key={i} style={{ borderBottom: i < 5 ? '1px solid var(--border-color)' : 'none', transition: 'var(--transition)' }}>
+                      <td style={{ padding: '1.25rem 2rem', fontWeight: 600 }}>{row.name}</td>
+                      <td style={{ padding: '1.25rem 2rem', color: 'var(--text-secondary)' }}>{row.provider}</td>
+                      <td style={{ padding: '1.25rem 2rem', textAlign: 'right', fontWeight: 600, color: 'var(--accent-primary)' }}>${row.input.toFixed(2)}</td>
+                      <td style={{ padding: '1.25rem 2rem', textAlign: 'right', fontWeight: 600, color: 'var(--accent-primary)' }}>${row.output.toFixed(2)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          </div>
-        </section>
-
-        {/* CTA */}
-        <section className="container" style={{ padding: '8rem 1rem' }}>
-          <div className="glass-card flex-col items-center text-center animate-fade-in" style={{ padding: '6rem 2rem', background: 'var(--accent-gradient)', color: '#fff' }}>
-            <h2 style={{ color: '#fff', fontSize: '3.5rem', marginBottom: '1.5rem', letterSpacing: '-0.03em', fontWeight: 800 }}>Master Your AI Stack.</h2>
-            <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '1.3rem', marginBottom: '3.5rem', maxWidth: '600px' }}>
-              Join forward-thinking engineering teams managing millions of LLM requests with LiteDash.
-            </p>
-            <div className="flex gap-4">
-              <Link href="/login" className="btn" style={{ background: '#fff', color: 'var(--accent-primary)', padding: '1rem 3rem', fontSize: '1.1rem', borderRadius: '14px', fontWeight: 700 }}>
-                Launch Dashboard
-              </Link>
-              <Link href="/docs" className="btn" style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', border: '1px solid rgba(255,255,255,0.3)', padding: '1rem 3rem', fontSize: '1.1rem', borderRadius: '14px', fontWeight: 600, backdropFilter: 'blur(10px)' }}>
-                View Docs
-              </Link>
+            <div style={{ marginTop: '3rem', textAlign: 'center' }}>
+              <Link href="/login" className="btn btn-primary" style={{ padding: '1rem 3rem', borderRadius: '12px' }}>Start Integration</Link>
             </div>
           </div>
         </section>
       </main>
 
       <footer style={{ borderTop: '1px solid var(--border-color)', padding: '5rem 0', color: 'var(--text-tertiary)', backgroundColor: 'var(--bg-primary)' }}>
-        <div className="container flex justify-between items-center">
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-              <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: 'var(--accent-gradient)' }} />
-              <span style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--text-primary)' }}>LiteDash</span>
+        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: 'var(--accent-gradient)' }} />
+                <span style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--text-primary)' }}>LiteDash</span>
+              </div>
+              <div style={{ display: 'flex', gap: '2rem', fontSize: '0.9rem' }}>
+                <Link href="/docs" className="nav-link" style={{ fontWeight: 600 }}>Documentation</Link>
+                <Link href="/login" className="nav-link" style={{ fontWeight: 600 }}>Dashboard</Link>
+                <a href="#pricing" className="nav-link" style={{ fontWeight: 600 }}>Model Fees</a>
+              </div>
             </div>
-            <p style={{ fontSize: '0.8rem' }}>&copy; 2026 LiteDash Infrastructure. All rights reserved.</p>
+            <p style={{ fontSize: '0.8rem', marginTop: '0.5rem' }}>&copy; 2026 LiteDash Infrastructure. All rights reserved.</p>
           </div>
-          <div className="flex gap-12" style={{ fontSize: '0.9rem' }}>
-            <div className="flex flex-col gap-3">
-              <span style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Product</span>
-              <Link href="/docs" className="nav-link">Documentation</Link>
-              <Link href="/login" className="nav-link">Dashboard</Link>
-              <a href="#pricing" className="nav-link">Pricing</a>
-            </div>
-            <div className="flex flex-col gap-3">
-              <span style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Legal</span>
-              <a href="#" className="nav-link">Privacy</a>
-              <a href="#" className="nav-link">Terms</a>
-            </div>
+          <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+            <Link href="/login" className="btn btn-primary" style={{ padding: '0.6rem 1.5rem', fontSize: '0.85rem' }}>Sign In</Link>
           </div>
         </div>
       </footer>
