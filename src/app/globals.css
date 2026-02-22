@@ -742,6 +742,29 @@ table tbody tr:hover {
   .modal-content .responsive-grid-3 {
     grid-template-columns: 1fr;
   }
+
+  /* Landing Page Specific Mobile Fixes */
+  .mobile-stack {
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+  }
+
+  .mobile-text-center {
+    text-align: center !important;
+  }
+
+  .mobile-hide {
+    display: none !important;
+  }
+
+  .hero-title {
+    font-size: clamp(2.5rem, 12vw, 5rem) !important;
+    line-height: 1.1 !important;
+  }
+
+  .section-padding {
+    padding: 4rem 1rem !important;
+  }
 }
 
 /* ── Global Animations ── */
