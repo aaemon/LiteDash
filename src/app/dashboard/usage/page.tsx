@@ -44,9 +44,10 @@ export default function UsagePage() {
         // User breakdown
         const userMap: Record<string, { name: string; spend: number }> = {};
         logs.forEach(l => {
-            const u = l.user_id || 'anonymous';
-            if (!userMap[u]) userMap[u] = { name: u, spend: 0 };
-            userMap[u].spend += l.spend || 0;
+            // Priority: enriched email > user > api_key_user_id > user_id
+            const uDisplayName = l.user_email || l.user || l.api_key_user_id || l.user_id || 'anonymous';
+            if (!userMap[uDisplayName]) userMap[uDisplayName] = { name: uDisplayName, spend: 0 };
+            userMap[uDisplayName].spend += l.spend || 0;
         });
         const userData = Object.values(userMap).sort((a, b) => b.spend - a.spend).slice(0, 8);
 
