@@ -164,12 +164,12 @@ export default function Home() {
               gap: '1.5rem',
             }}>
               {[
-                { name: 'GPT-4o', provider: 'OpenAI', desc: 'The gold standard for reasoning and complex multimodal tasks.', color: '#10a37f' },
-                { name: 'Claude 3.5 Sonnet', provider: 'Anthropic', desc: 'Superior coding capabilities and nuanced human-like reasoning.', color: '#d97757' },
-                { name: 'Llama 3.1 405B', provider: 'Meta', desc: 'Next-generation open intelligence at massive scale.', color: '#0668E1' },
-                { name: 'Gemini 1.5 Pro', provider: 'Google', desc: 'Unprecedented 2M context window for long-form reasoning.', color: '#4285f4' },
-                { name: 'Mistral Large 2', provider: 'Mistral AI', desc: 'European efficiency with top-tier performance benchmarks.', color: '#f5d142' },
-                { name: 'DeepSeek-V2', provider: 'DeepSeek', desc: 'Optimized Mixture-of-Experts for hyper-efficient inference.', color: '#6a11cb' }
+                { name: 'gpt-4o', provider: 'OpenAI', desc: 'The gold standard for reasoning and complex multimodal tasks.', color: '#10a37f' },
+                { name: 'claude-3-5-sonnet', provider: 'Anthropic', desc: 'Superior coding capabilities and nuanced human-like reasoning.', color: '#d97757' },
+                { name: 'llama-3.1-405b', provider: 'Meta', desc: 'Next-generation open intelligence at massive scale.', color: '#0668E1' },
+                { name: 'gemini-1.5-pro', provider: 'Google', desc: 'Unprecedented 2M context window for long-form reasoning.', color: '#4285f4' },
+                { name: 'mistral-large-2', provider: 'Mistral AI', desc: 'European efficiency with top-tier performance benchmarks.', color: '#f5d142' },
+                { name: 'gpt-4o-mini', provider: 'OpenAI', desc: 'Hyper-efficient model for lightweight, high-speed tasks.', color: '#fbbf24' }
               ].map((m, i) => (
                 <div key={i} className="glass-card" style={{ padding: '2rem', height: '100%', border: '1px solid var(--border-color)', background: 'var(--bg-primary)' }}>
                   <div style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
