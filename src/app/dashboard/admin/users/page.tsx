@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useCurrency } from '@/hooks/useCurrency';
 
 export default function AdminUsersPage() {
     const [users, setUsers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [editUser, setEditUser] = useState<any>(null);
+    const { symbol, format } = useCurrency();
 
     // Form fields
     const [formUserId, setFormUserId] = useState('');
@@ -133,7 +135,7 @@ export default function AdminUsersPage() {
                                     <input className="input" type="text" placeholder={editUser ? 'Leave blank to keep' : 'Enter password'} value={formPassword} onChange={e => setFormPassword(e.target.value)} required={!editUser} />
                                 </div>
                                 <div style={fieldStyle}>
-                                    <label style={labelStyle}>Max Budget ($)</label>
+                                    <label style={labelStyle}>Max Budget ({symbol})</label>
                                     <input className="input" type="number" step="0.01" placeholder="Unlimited" value={formBudget} onChange={e => setFormBudget(e.target.value)} />
                                 </div>
                             </div>
@@ -192,8 +194,8 @@ export default function AdminUsersPage() {
                                     <tr key={i} style={{ borderBottom: '1px solid var(--border-color)' }}>
                                         <td style={{ padding: '0.5rem', fontWeight: 500, fontSize: '0.82rem' }}>{u.user_id}</td>
                                         <td style={{ padding: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.78rem' }}>{u.user_email || '—'}</td>
-                                        <td style={{ padding: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.78rem' }}>${Number(u.spend || 0).toFixed(4)}</td>
-                                        <td style={{ padding: '0.5rem', fontSize: '0.78rem' }}>{u.max_budget ? `$${Number(u.max_budget).toFixed(2)}` : '∞'}</td>
+                                        <td style={{ padding: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.78rem' }}>{format(u.spend || 0)}</td>
+                                        <td style={{ padding: '0.5rem', fontSize: '0.78rem' }}>{u.max_budget ? format(u.max_budget, 2) : '∞'}</td>
                                         <td style={{ padding: '0.5rem', fontSize: '0.75rem', color: 'var(--text-secondary)', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                             {u.models?.length ? u.models.join(', ') : 'All'}
                                         </td>

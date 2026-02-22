@@ -2,28 +2,23 @@
 
 import { useState, useEffect } from 'react';
 import StatCard from '@/components/StatCard';
+import { useCurrency } from '@/hooks/useCurrency';
 
 export default function UsagePage() {
     const [usage, setUsage] = useState<any>(null);
     const [logs, setLogs] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const [sym, setSym] = useState('$');
-    const [mul, setMul] = useState(1);
+    const { symbol, format: fmt } = useCurrency();
 
     useEffect(() => {
         Promise.all([
             fetch('/api/usage').then(r => r.json()),
             fetch('/api/logs').then(r => r.json()),
-            fetch('/api/settings').then(r => r.json()).catch(() => ({})),
-        ]).then(([usageData, logsData, settings]) => {
+        ]).then(([usageData, logsData]) => {
             if (usageData) setUsage(usageData);
             setLogs(logsData.logs || []);
-            if (settings.currencySymbol) setSym(settings.currencySymbol);
-            if (settings.currencyMultiplier) setMul(settings.currencyMultiplier);
         }).catch(() => { }).finally(() => setLoading(false));
     }, []);
-
-    const fmt = (v: number, decimals = 4) => `${sym}${(v * mul).toFixed(decimals)}`;
 
     // Compute analytics from logs
     const totalSpend = logs.reduce((s, l) => s + (l.spend || 0), 0);
@@ -178,7 +173,7 @@ export default function UsagePage() {
                             <div><span style={{ color: 'var(--text-tertiary)' }}>Success:</span> <span style={{ fontWeight: 600, color: 'var(--success)' }}>{successCount}</span></div>
                             <div><span style={{ color: 'var(--text-tertiary)' }}>Failed:</span> <span style={{ fontWeight: 600, color: failCount > 0 ? 'var(--danger)' : 'var(--text-secondary)' }}>{failCount}</span></div>
                             <div><span style={{ color: 'var(--text-tertiary)' }}>Avg Tokens/Req:</span> <span style={{ fontWeight: 600 }}>{logs.length ? Math.round(totalTokens / logs.length).toLocaleString() : 0}</span></div>
-                            <div><span style={{ color: 'var(--text-tertiary)' }}>Avg Cost/Req:</span> <span style={{ fontWeight: 600 }}>{logs.length ? fmt(totalSpend / logs.length, 6) : `${sym}0`}</span></div>
+                            <div><span style={{ color: 'var(--text-tertiary)' }}>Avg Cost/Req:</span> <span style={{ fontWeight: 600 }}>{logs.length ? fmt(totalSpend / logs.length, 6) : `${symbol}0`}</span></div>
                         </div>
                     </div>
                 </>

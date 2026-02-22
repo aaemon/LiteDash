@@ -8,7 +8,7 @@ services:
     # image: aaemon/litedash:latest
     container_name: litedash
     ports:
-      - "3000:3000"
+      - "3080:3000"
     environment:
       - LITELLM_URL=http://litellm-proxy:4000
       - LITELLM_MASTER_KEY=${LITELLM_MASTER_KEY:-your-master-key}

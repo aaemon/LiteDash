@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useCurrency } from '@/hooks/useCurrency';
 
 export default function ModelsPage() {
     const [models, setModels] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const { format } = useCurrency();
 
     useEffect(() => {
         const fetchModels = async () => {
@@ -66,14 +68,14 @@ export default function ModelsPage() {
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
                                     <span style={{ fontSize: '0.65rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 500 }}>Input</span>
                                     <span style={{ fontWeight: 600 }}>
-                                        ${model.input_cost_per_token ? Number(model.input_cost_per_token * 1000000).toFixed(2) : '0.00'}
+                                        {format((model.input_cost_per_token || 0) * 1000000, 2)}
                                         <span style={{ fontSize: '0.65rem', color: 'var(--text-tertiary)', fontWeight: 400 }}> /1M</span>
                                     </span>
                                 </div>
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
                                     <span style={{ fontSize: '0.65rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 500 }}>Output</span>
                                     <span style={{ fontWeight: 600 }}>
-                                        ${model.output_cost_per_token ? Number(model.output_cost_per_token * 1000000).toFixed(2) : '0.00'}
+                                        {format((model.output_cost_per_token || 0) * 1000000, 2)}
                                         <span style={{ fontSize: '0.65rem', color: 'var(--text-tertiary)', fontWeight: 400 }}> /1M</span>
                                     </span>
                                 </div>
