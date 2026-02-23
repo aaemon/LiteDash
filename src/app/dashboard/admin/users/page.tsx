@@ -136,7 +136,7 @@ export default function AdminUsersPage() {
                                     <input className="input" type="text" placeholder={editUser ? 'Leave blank to keep' : 'Enter password'} value={formPassword} onChange={e => setFormPassword(e.target.value)} required={!editUser} />
                                 </div>
                                 <div style={fieldStyle}>
-                                    <label style={labelStyle}>Max Budget ({symbol})</label>
+                                    <label style={labelStyle}>Max Budget ($)</label>
                                     <input className="input" type="number" step="0.01" placeholder="Unlimited" value={formBudget} onChange={e => setFormBudget(e.target.value)} />
                                 </div>
                             </div>
