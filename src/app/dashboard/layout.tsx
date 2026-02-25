@@ -35,6 +35,8 @@ export default async function DashboardLayout({
 
     const navItems = isAdmin ? [
         { name: 'Overview', href: '/dashboard' },
+        { name: 'API Keys', href: '/dashboard/keys' },
+        { name: 'Playground', href: '/dashboard/playground' },
         { name: 'Usage & Analytics', href: '/dashboard/usage' },
         { name: 'Request Logs', href: '/dashboard/logs' },
         { name: 'Users & Budgets', href: '/dashboard/admin/users' },

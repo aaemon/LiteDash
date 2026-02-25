@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -74,6 +75,15 @@ export default function LoginPage() {
                     </button>
                 </form>
 
+                <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', fontSize: '0.8rem' }}>
+                    <Link href="/" style={{ color: 'var(--text-secondary)', textDecoration: 'none', transition: 'color 0.15s ease' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--text-primary)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}>
+                        &larr; Back to Home
+                    </Link>
+                    <span style={{ color: 'var(--border-color)' }}>|</span>
+                    <Link href="/docs" style={{ color: 'var(--text-secondary)', textDecoration: 'none', transition: 'color 0.15s ease' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--text-primary)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}>
+                        Documentation
+                    </Link>
+                </div>
 
             </div>
         </div>

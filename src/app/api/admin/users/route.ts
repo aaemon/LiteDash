@@ -20,9 +20,8 @@ export async function POST(req: Request) {
     if (!session || session.role !== 'admin') {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
-
     try {
-        const { user_id, max_budget, password, email, models, tpm_limit, rpm_limit, metadata } = await req.json();
+        const { user_id, max_budget, password, email, models, tpm_limit, rpm_limit, metadata, role } = await req.json();
 
         const body: any = {
             user_id,
@@ -30,6 +29,7 @@ export async function POST(req: Request) {
             user_email: email || null,
             password: password || null,
             auto_create_key: false,
+            user_role: role || 'internal_user',
         };
 
         if (models) body.models = models.split(',').map((m: string) => m.trim()).filter(Boolean);

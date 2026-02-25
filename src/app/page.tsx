@@ -35,6 +35,8 @@ const PROVIDER_COLORS: Record<string, string> = {
 };
 
 const ENTERPRISE_FEATURES = [
+  { icon: '🌐', title: 'Endpoints & Providers', desc: 'Unified interface for 100+ language models and providers with a single standard OpenAI-compatible format.' },
+  { icon: '🔒', title: 'Data Privacy & Security', desc: 'Enterprise-grade encryption, zero data retention policies, and compliance-ready infrastructure.' },
   { icon: '🔑', title: 'Virtual API Keys', desc: 'Securely generate and segment isolated virtual keys for every developer, project, and environment.' },
   { icon: '📊', title: 'Usage Monitoring', desc: 'Complete sub-second observability. Track request latencies, token consumption, and errors in real-time.' },
   { icon: '💰', title: 'Budget Controls', desc: 'Enforce hard limits on maximum spend per key, user, or organization to completely eliminate cost overruns.' },
@@ -45,8 +47,6 @@ const ENTERPRISE_FEATURES = [
   { icon: '⚙️', title: 'Routing Policies', desc: 'Define complex failover, load-balancing, and semantic cost-routing rules directly at the API layer.' },
   { icon: '🛠️', title: 'Embedded Tools', desc: 'Provide immediate model context through built-in support for vector similarity search and web integration.' },
   { icon: '🧪', title: 'Interactive Playground', desc: 'Instantly test prompts, adjust parameters, and benchmark models in a rich UI without writing code.' },
-  { icon: '🌐', title: 'Endpoints & Providers', desc: 'Unified interface for 100+ language models and providers with a single standard OpenAI-compatible format.' },
-  { icon: '🔒', title: 'Data Privacy & Security', desc: 'Enterprise-grade encryption, zero data retention policies, and compliance-ready infrastructure.' },
 ];
 
 export default function Home() {
@@ -101,8 +101,8 @@ export default function Home() {
           </Link>
           <div className="flex items-center gap-4">
             <ThemeToggle />
-            <Link href="/docs" className="nav-link mobile-hide" style={{ fontSize: '0.9rem', fontWeight: 600 }}>Documentation</Link>
-            <Link href="/login" className="btn btn-primary">Dashboard</Link>
+            <Link href="/docs" className="nav-link mobile-hide" style={{ fontSize: '0.9rem', fontWeight: 600 }}>Docs</Link>
+            <Link href="/login" className="btn btn-primary">Login</Link>
           </div>
         </div>
       </nav>
@@ -388,8 +388,8 @@ export default function Home() {
                 <span style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--text-primary)' }}>{settings.appName}</span>
               </div>
               <div className="flex gap-6 mobile-hide" style={{ display: 'flex', gap: '2rem', fontSize: '1rem', fontWeight: 500 }}>
-                <Link href="/docs" className="nav-link">Documentation</Link>
-                <Link href="/login" className="nav-link">Control Plane</Link>
+                <Link href="/docs" className="nav-link">Docs</Link>
+                <Link href="/login" className="nav-link">Login</Link>
               </div>
             </div>
             <p style={{ fontSize: '0.9rem', marginTop: '1rem' }}>&copy; {new Date().getFullYear()} {settings.appName} Infrastructure. Accelerating Global Enterprise AI. All rights reserved.</p>

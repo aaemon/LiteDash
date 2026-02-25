@@ -20,6 +20,7 @@ export default function AdminUsersPage() {
     const [formTpm, setFormTpm] = useState('');
     const [formRpm, setFormRpm] = useState('');
     const [formMetadata, setFormMetadata] = useState('');
+    const [formRole, setFormRole] = useState('internal_user');
     const [saving, setSaving] = useState(false);
 
     const fetchUsers = async () => {
@@ -36,6 +37,7 @@ export default function AdminUsersPage() {
     const resetForm = () => {
         setFormUserId(''); setFormEmail(''); setFormPassword(''); setFormBudget('');
         setFormModels(''); setFormTpm(''); setFormRpm(''); setFormMetadata('');
+        setFormRole('internal_user');
         setEditUser(null);
     };
 
@@ -51,6 +53,7 @@ export default function AdminUsersPage() {
         setFormTpm(u.tpm_limit ? String(u.tpm_limit) : '');
         setFormRpm(u.rpm_limit ? String(u.rpm_limit) : '');
         setFormMetadata(u.metadata ? JSON.stringify(u.metadata) : '');
+        setFormRole(u.user_role || 'internal_user');
         setShowModal(true);
     };
 
@@ -65,7 +68,8 @@ export default function AdminUsersPage() {
                         user_id: formUserId, max_budget: formBudget || undefined,
                         password: formPassword || undefined, email: formEmail || undefined,
                         models: formModels || undefined, tpm_limit: formTpm || undefined,
-                        rpm_limit: formRpm || undefined, metadata: formMetadata || undefined
+                        rpm_limit: formRpm || undefined, metadata: formMetadata || undefined,
+                        role: formRole
                     })
                 });
                 if (!res.ok) { const err = await res.json(); alert(err.error || 'Failed'); return; }
@@ -76,7 +80,7 @@ export default function AdminUsersPage() {
                     body: JSON.stringify({
                         user_id: formUserId, max_budget: formBudget, password: formPassword,
                         email: formEmail, models: formModels, tpm_limit: formTpm,
-                        rpm_limit: formRpm, metadata: formMetadata
+                        rpm_limit: formRpm, metadata: formMetadata, role: formRole
                     })
                 });
                 if (!res.ok) { const err = await res.json(); alert(err.error || 'Failed'); return; }
@@ -127,6 +131,18 @@ export default function AdminUsersPage() {
                                 <div style={fieldStyle}>
                                     <label style={labelStyle}>Email</label>
                                     <input className="input" type="email" placeholder="user@company.com" value={formEmail} onChange={e => setFormEmail(e.target.value)} />
+                                </div>
+                            </div>
+
+                            <div className="responsive-grid-2">
+                                <div style={fieldStyle}>
+                                    <label style={labelStyle}>Role</label>
+                                    <select className="input" value={formRole} onChange={e => setFormRole(e.target.value)}>
+                                        <option value="proxy_admin">Admin (All Permissions)</option>
+                                        <option value="proxy_admin_viewer">Admin (View Only)</option>
+                                        <option value="internal_user">Internal User (Create/Delete/View)</option>
+                                        <option value="internal_user_viewer">Internal User (View Only)</option>
+                                    </select>
                                 </div>
                             </div>
 
@@ -185,36 +201,46 @@ export default function AdminUsersPage() {
                         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                             <thead>
                                 <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
-                                    {['User ID', 'Email', 'Spend', 'Budget', 'Models', 'Status', 'Actions'].map(h => (
+                                    {['User ID', 'Email', 'Role', 'Spend', 'Budget', 'Models', 'Status', 'Actions'].map(h => (
                                         <th key={h} style={{ padding: '0.6rem 0.5rem', fontWeight: 600, fontSize: '0.68rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: h === 'Actions' ? 'right' : 'left', whiteSpace: 'nowrap' }}>{h}</th>
                                     ))}
                                 </tr>
                             </thead>
                             <tbody>
-                                {users.map((u, i) => (
-                                    <tr key={i} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                                        <td style={{ padding: '0.5rem', fontWeight: 500, fontSize: '0.82rem' }}>{u.user_id}</td>
-                                        <td style={{ padding: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.78rem' }}>{u.user_email || '—'}</td>
-                                        <td style={{ padding: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.78rem' }}>{format(u.spend || 0)}</td>
-                                        <td style={{ padding: '0.5rem', fontSize: '0.78rem' }}>{u.max_budget ? format(u.max_budget, 2) : '∞'}</td>
-                                        <td style={{ padding: '0.5rem', fontSize: '0.75rem', color: 'var(--text-secondary)', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                            {u.models?.length ? u.models.join(', ') : 'All'}
-                                        </td>
-                                        <td style={{ padding: '0.5rem' }}>
-                                            <span style={{
-                                                fontSize: '0.62rem', padding: '0.12rem 0.35rem', borderRadius: 'var(--radius-full)', fontWeight: 600, textTransform: 'uppercase',
-                                                background: u.spend > (u.max_budget || Infinity) ? 'rgba(239, 68, 68, 0.1)' : 'rgba(34, 197, 94, 0.1)',
-                                                color: u.spend > (u.max_budget || Infinity) ? 'var(--danger)' : 'var(--success)',
-                                            }}>{u.spend > (u.max_budget || Infinity) ? 'Over Budget' : 'Active'}</span>
-                                        </td>
-                                        <td style={{ padding: '0.5rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
-                                            <div style={{ display: 'flex', gap: '0.25rem', justifyContent: 'flex-end' }}>
-                                                <button onClick={() => openEdit(u)} className="btn btn-outline" style={{ padding: '0.18rem 0.4rem', fontSize: '0.68rem' }}>Edit</button>
-                                                <button onClick={() => handleDelete(u.user_id)} className="btn btn-outline" style={{ padding: '0.18rem 0.4rem', fontSize: '0.68rem', color: 'var(--danger)', borderColor: 'var(--danger)' }}>Delete</button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
+                                {users.map((u, i) => {
+                                    const roleMap: any = {
+                                        'proxy_admin': 'Admin',
+                                        'proxy_admin_viewer': 'Admin (Viewer)',
+                                        'internal_user': 'Internal',
+                                        'internal_user_viewer': 'Internal (Viewer)'
+                                    };
+                                    const displayRole = roleMap[u.user_role] || 'Internal';
+                                    return (
+                                        <tr key={i} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                                            <td style={{ padding: '0.5rem', fontWeight: 500, fontSize: '0.82rem' }}>{u.user_id}</td>
+                                            <td style={{ padding: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.78rem' }}>{u.user_email || '—'}</td>
+                                            <td style={{ padding: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.78rem' }}>{displayRole}</td>
+                                            <td style={{ padding: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.78rem' }}>{format(u.spend || 0)}</td>
+                                            <td style={{ padding: '0.5rem', fontSize: '0.78rem' }}>{u.max_budget ? format(u.max_budget, 2) : '∞'}</td>
+                                            <td style={{ padding: '0.5rem', fontSize: '0.75rem', color: 'var(--text-secondary)', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                                {u.models?.length ? u.models.join(', ') : 'All'}
+                                            </td>
+                                            <td style={{ padding: '0.5rem' }}>
+                                                <span style={{
+                                                    fontSize: '0.62rem', padding: '0.12rem 0.35rem', borderRadius: 'var(--radius-full)', fontWeight: 600, textTransform: 'uppercase',
+                                                    background: u.spend > (u.max_budget || Infinity) ? 'rgba(239, 68, 68, 0.1)' : 'rgba(34, 197, 94, 0.1)',
+                                                    color: u.spend > (u.max_budget || Infinity) ? 'var(--danger)' : 'var(--success)',
+                                                }}>{u.spend > (u.max_budget || Infinity) ? 'Over Budget' : 'Active'}</span>
+                                            </td>
+                                            <td style={{ padding: '0.5rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                                                <div style={{ display: 'flex', gap: '0.25rem', justifyContent: 'flex-end' }}>
+                                                    <button onClick={() => openEdit(u)} className="btn btn-outline" style={{ padding: '0.18rem 0.4rem', fontSize: '0.68rem' }}>Edit</button>
+                                                    <button onClick={() => handleDelete(u.user_id)} className="btn btn-outline" style={{ padding: '0.18rem 0.4rem', fontSize: '0.68rem', color: 'var(--danger)', borderColor: 'var(--danger)' }}>Delete</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
                             </tbody>
                         </table>
                     </div>

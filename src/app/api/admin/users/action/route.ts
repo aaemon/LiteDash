@@ -21,9 +21,10 @@ export async function PUT(req: Request) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
     try {
-        const { user_id, max_budget, password, email, models, tpm_limit, rpm_limit, metadata } = await req.json();
+        const { user_id, max_budget, password, email, models, tpm_limit, rpm_limit, metadata, role } = await req.json();
 
         const bodyReq: any = { user_id };
+        if (role) bodyReq.user_role = role;
         if (max_budget !== undefined) bodyReq.max_budget = max_budget ? parseFloat(max_budget) : null;
         if (password) bodyReq.password = password;
         if (email !== undefined) bodyReq.user_email = email || null;

@@ -1,34 +1,22 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTheme } from 'next-themes';
 
 export default function ThemeToggle() {
-    const [theme, setTheme] = useState('light');
+    const { theme, setTheme, resolvedTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const isDark = document.documentElement.classList.contains('dark') ||
-                (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches && !document.documentElement.classList.contains('light'));
-            setTheme(isDark ? 'dark' : 'light');
-            if (isDark) {
-                document.documentElement.classList.add('dark');
-            }
-        }
+        setMounted(true);
     }, []);
 
-    const toggleTheme = () => {
-        if (theme === 'light') {
-            document.documentElement.classList.remove('light');
-            document.documentElement.classList.add('dark');
-            setTheme('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-            document.documentElement.classList.add('light');
-            setTheme('light');
-        }
-    };
+    // Prevent hydration mismatch by only rendering after mount
+    const isLight = mounted && (theme === 'system' ? resolvedTheme === 'light' : theme === 'light');
 
-    const isLight = theme === 'light';
+    const toggleTheme = () => {
+        setTheme(isLight ? 'dark' : 'light');
+    };
 
     return (
         <button
