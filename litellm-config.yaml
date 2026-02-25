@@ -7,6 +7,7 @@ model_list:
       model: ollama/gpt-oss:120b
       api_base: "http://host.docker.internal:11434"
     model_info:
+      max_tokens: 128000
       input_cost_per_token: 0.0000008  # $0.80 per 1M
       output_cost_per_token: 0.0000020 # $2.00 per 1M
 
@@ -15,6 +16,7 @@ model_list:
       model: ollama/deepseek-r1:latest
       api_base: "http://host.docker.internal:11434"
     model_info:
+      max_tokens: 128000
       input_cost_per_token: 0.0000006  # $0.60 per 1M
       output_cost_per_token: 0.0000015 # $1.50 per 1M
 
@@ -26,6 +28,7 @@ model_list:
       model: ollama/qwen3-next:80b
       api_base: "http://host.docker.internal:11434"
     model_info:
+      max_tokens: 131072
       input_cost_per_token: 0.0000005  # $0.50 per 1M
       output_cost_per_token: 0.0000015 # $1.50 per 1M
 
@@ -34,6 +37,7 @@ model_list:
       model: ollama/qwen3-next:latest
       api_base: "http://host.docker.internal:11434"
     model_info:
+      max_tokens: 131072
       input_cost_per_token: 0.0000005
       output_cost_per_token: 0.0000015
 
@@ -42,6 +46,7 @@ model_list:
       model: ollama/nemotron:latest
       api_base: "http://host.docker.internal:11434"
     model_info:
+      max_tokens: 128000
       input_cost_per_token: 0.0000005
       output_cost_per_token: 0.0000015
 
@@ -50,6 +55,7 @@ model_list:
       model: ollama/gpt-oss:latest
       api_base: "http://host.docker.internal:11434"
     model_info:
+      max_tokens: 128000
       input_cost_per_token: 0.0000005
       output_cost_per_token: 0.0000015
 
@@ -61,6 +67,7 @@ model_list:
       model: ollama/qwen3-coder-next:latest
       api_base: "http://host.docker.internal:11434"
     model_info:
+      max_tokens: 131072
       input_cost_per_token: 0.0000002  # $0.20 per 1M
       output_cost_per_token: 0.0000006 # $0.60 per 1M
 
@@ -69,6 +76,7 @@ model_list:
       model: ollama/qwen3-vl:latest
       api_base: "http://host.docker.internal:11434"
     model_info:
+      max_tokens: 32768
       input_cost_per_token: 0.00000015 # $0.15 per 1M
       output_cost_per_token: 0.0000004 # $0.40 per 1M
 
@@ -77,6 +85,7 @@ model_list:
       model: ollama/translategemma:latest
       api_base: "http://host.docker.internal:11434"
     model_info:
+      max_tokens: 8192
       input_cost_per_token: 0.0000001
       output_cost_per_token: 0.0000002
 
@@ -85,6 +94,7 @@ model_list:
       model: ollama/deepseek-ocr:latest
       api_base: "http://host.docker.internal:11434"
     model_info:
+      max_tokens: 32768
       input_cost_per_token: 0.00000005
       output_cost_per_token: 0.0000001
 
@@ -93,6 +103,7 @@ model_list:
       model: ollama/glm-ocr:latest
       api_base: "http://host.docker.internal:11434"
     model_info:
+      max_tokens: 32768
       input_cost_per_token: 0.00000005
       output_cost_per_token: 0.0000001
 
@@ -101,6 +112,7 @@ model_list:
       model: ollama/gpt-oss-safeguard:latest
       api_base: "http://host.docker.internal:11434"
     model_info:
+      max_tokens: 8192
       input_cost_per_token: 0.0000001
       output_cost_per_token: 0.0000002
 
@@ -112,6 +124,7 @@ model_list:
       model: ollama/qwen3:latest
       api_base: "http://host.docker.internal:11434"
     model_info:
+      max_tokens: 32768
       input_cost_per_token: 0.00000005 # $0.05 per 1M
       output_cost_per_token: 0.0000001 # $0.10 per 1M
 
@@ -120,6 +133,7 @@ model_list:
       model: ollama/glm-4.7-flash:latest
       api_base: "http://host.docker.internal:11434"
     model_info:
+      max_tokens: 128000
       input_cost_per_token: 0.00000005
       output_cost_per_token: 0.0000001
 
@@ -131,6 +145,7 @@ model_list:
       model: ollama/nomic-embed-text:latest
       api_base: "http://host.docker.internal:11434"
     model_info:
+      max_tokens: 8192
       input_cost_per_token: 0.00000001 # $0.01 per 1M
       output_cost_per_token: 0.0       # Usually 0 for embeddings
 

@@ -14,6 +14,7 @@ export async function GET() {
             provider: m.litellm_params?.model?.split('/')[0] || 'Custom',
             input_cost_1m: (m.model_info?.input_cost_per_token || 0) * 1000000,
             output_cost_1m: (m.model_info?.output_cost_per_token || 0) * 1000000,
+            context_window: m.model_info?.max_tokens || 8192,
             desc: m.model_info?.description || `High-performance model: ${m.model_name}`
         }));
 
