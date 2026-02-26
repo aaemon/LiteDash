@@ -31,7 +31,15 @@ export async function POST(req: Request) {
             })
         });
 
-        const data = await res.json();
+        let text = '';
+        let data: any = {};
+        try {
+            text = await res.text();
+            data = JSON.parse(text);
+        } catch (e) {
+            console.error('[Chat API] Expected JSON but got text from LiteLLM:', text.substring(0, 500));
+            return NextResponse.json({ error: `Received non-JSON response from LiteLLM (Status ${res.status}): ${text.substring(0, 100)}...` }, { status: 500 });
+        }
 
         if (!res.ok) {
             return NextResponse.json({ error: data.error?.message || data.message || `Error: ${res.statusText}` }, { status: res.status });

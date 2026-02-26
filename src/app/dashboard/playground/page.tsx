@@ -13,8 +13,15 @@ export default function PlaygroundPage() {
     const [error, setError] = useState('');
 
     useEffect(() => {
-        fetch('/api/keys').then(r => r.json()).then(d => { if (d.keys) setKeys(d.keys); });
-        fetch('/api/models').then(r => r.json()).then(d => { if (d.models) { setModels(d.models); if (d.models.length > 0) setSelectedModel(d.models[0].id); } });
+        fetch('/api/keys')
+            .then(async r => { try { return JSON.parse(await r.text()); } catch { return {}; } })
+            .then(d => { if (d.keys) setKeys(d.keys); })
+            .catch(e => console.error('Failed to fetch keys', e));
+
+        fetch('/api/models')
+            .then(async r => { try { return JSON.parse(await r.text()); } catch { return {}; } })
+            .then(d => { if (d.models) { setModels(d.models); if (d.models.length > 0) setSelectedModel(d.models[0].id); } })
+            .catch(e => console.error('Failed to fetch models', e));
     }, []);
 
     const handleTest = async (e: React.FormEvent) => {
@@ -27,7 +34,13 @@ export default function PlaygroundPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ apiKey: selectedKey, model: selectedModel, messages: [{ role: 'user', content: prompt }] })
             });
-            const data = await res.json();
+            const text = await res.text();
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch (e) {
+                throw new Error(`Invalid response format from server (Status ${res.status}): ${text.substring(0, 100)}...`);
+            }
             if (!res.ok) setError(data.error || 'API Request Failed');
             else setResponse(data.result);
         } catch (err: any) { setError(err.message); }
