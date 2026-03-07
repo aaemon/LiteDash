@@ -28,33 +28,38 @@ export default async function DashboardLayout({
         redirect('/login');
     }
 
-    const isAdmin = session.role === 'admin';
+    const adminRoles = ['admin', 'proxy_admin', 'proxy_admin_viewer', 'internal_user', 'internal_viewer'];
+    const isAdmin = adminRoles.includes(session.role);
+    const isInternalUser = session.role === 'internal_user';
     const settings = getSettings();
     const appName = settings.appName || 'LiteLLM Portal';
     const logoUrl = settings.logoUrl || '';
 
-    const navItems = isAdmin ? [
-        { name: 'Overview', href: '/dashboard' },
-        { name: 'API Keys', href: '/dashboard/keys' },
-        { name: 'Playground', href: '/dashboard/playground' },
-        { name: 'Usage & Analytics', href: '/dashboard/usage' },
-        { name: 'Request Logs', href: '/dashboard/logs' },
-        { name: 'Users & Budgets', href: '/dashboard/admin/users' },
-        { name: 'Models Manager', href: '/dashboard/admin/models' },
-        { name: 'MCP Servers', href: '/dashboard/admin/mcp' },
-        { name: 'Guardrails', href: '/dashboard/admin/guardrails' },
-        { name: 'Agents Config', href: '/dashboard/admin/agents' },
-        { name: 'API Docs', href: '/dashboard/docs' },
-        { name: 'Settings', href: '/dashboard/admin/settings' },
-    ] : [
+    let navItems = [
         { name: 'Overview', href: '/dashboard' },
         { name: 'API Keys', href: '/dashboard/keys' },
         { name: 'Usage & Budget', href: '/dashboard/usage' },
-        { name: 'Available Models', href: '/dashboard/models' },
         { name: 'Request Logs', href: '/dashboard/logs' },
         { name: 'Playground', href: '/dashboard/playground' },
         { name: 'API Docs', href: '/dashboard/docs' },
     ];
+
+    if (isAdmin || isInternalUser) {
+        navItems = [
+            { name: 'Overview', href: '/dashboard' },
+            { name: 'API Keys', href: '/dashboard/keys' },
+            { name: 'Playground', href: '/dashboard/playground' },
+            { name: 'Usage & Analytics', href: '/dashboard/usage' },
+            { name: 'Request Logs', href: '/dashboard/logs' },
+            ...(isAdmin ? [{ name: 'Users & Budgets', href: '/dashboard/admin/users' }] : []),
+            { name: 'Models Manager', href: '/dashboard/admin/models' },
+            { name: 'MCP Servers', href: '/dashboard/admin/mcp' },
+            { name: 'Guardrails', href: '/dashboard/admin/guardrails' },
+            { name: 'Agents Config', href: '/dashboard/admin/agents' },
+            { name: 'API Docs', href: '/dashboard/docs' },
+            ...(isAdmin ? [{ name: 'Settings', href: '/dashboard/admin/settings' }] : []),
+        ];
+    }
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden', backgroundColor: 'var(--bg-secondary)' }}>
@@ -99,7 +104,7 @@ export default async function DashboardLayout({
                 {/* Actions */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <ThemeToggle />
-                    <UserAvatar userId={session.userId} role={isAdmin ? 'Admin' : 'User'} />
+                    <UserAvatar userId={session.userId} role={session.role.replace(/_/g, ' ')} />
                 </div>
             </header>
 

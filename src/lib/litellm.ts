@@ -1,18 +1,20 @@
 import { cookies } from 'next/headers';
 
-const LITELLM_URL = process.env.LITELLM_URL || 'http://localhost:4000';
-const LITELLM_MASTER_KEY = process.env.LITELLM_MASTER_KEY || '';
-
 function getResolvedBaseUrl() {
-    return LITELLM_URL;
+    return process.env.LITELLM_URL || 'http://localhost:4000';
+}
+
+function getMasterKey() {
+    return process.env.LITELLM_MASTER_KEY || '';
 }
 
 export async function litellmFetch(endpoint: string, options: RequestInit = {}) {
-    const url = `${LITELLM_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+    const baseUrl = getResolvedBaseUrl();
+    const url = `${baseUrl}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
 
     const headers = new Headers(options.headers);
     if (!headers.has('Authorization')) {
-        headers.set('Authorization', `Bearer ${LITELLM_MASTER_KEY}`);
+        headers.set('Authorization', `Bearer ${getMasterKey()}`);
     }
     if (!headers.has('Content-Type')) {
         headers.set('Content-Type', 'application/json');
@@ -32,14 +34,15 @@ export async function litellmFetch(endpoint: string, options: RequestInit = {}) 
         }
 
         return res.json();
-    } catch (err: any) {
-        console.error(`[LiteLLM] Fetch Failed at ${url}:`, err.message);
+    } catch (err: unknown) {
+        const error = err as Error;
+        console.error(`[LiteLLM] Fetch Failed at ${url}:`, error.message);
         // Add additional logging for debugging connectivity/API issues
         console.error(`[LiteLLM] Request details: URL=${url}, Method=${options.method || 'GET'}, Headers=${JSON.stringify(Object.fromEntries(headers.entries()))}`);
         if (options.body) {
             console.error(`[LiteLLM] Request body: ${options.body}`);
         }
-        throw err;
+        throw error;
     }
 }
 
@@ -56,4 +59,16 @@ export async function getSession() {
     } catch {
         return null;
     }
+}
+
+export function isGlobalAdmin(role: string): boolean {
+    return ['admin', 'proxy_admin', 'proxy_admin_viewer'].includes(role);
+}
+
+export function hasReadAccess(role: string): boolean {
+    return isGlobalAdmin(role) || ['internal_user', 'internal_viewer'].includes(role);
+}
+
+export function hasWriteAccess(role: string): boolean {
+    return ['admin', 'proxy_admin', 'internal_user'].includes(role);
 }

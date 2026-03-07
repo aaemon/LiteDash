@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import { getSession, litellmFetch } from '@/lib/litellm';
+import { getSession, litellmFetch, hasWriteAccess } from '@/lib/litellm';
 
 export async function DELETE(req: Request) {
     const session = await getSession();
-    if (!session || session.role !== 'admin') {
+    if (!session || !hasWriteAccess(session.role)) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
     try {
@@ -17,7 +17,7 @@ export async function DELETE(req: Request) {
 
 export async function PUT(req: Request) {
     const session = await getSession();
-    if (!session || session.role !== 'admin') {
+    if (!session || !hasWriteAccess(session.role)) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
     try {

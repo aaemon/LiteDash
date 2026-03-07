@@ -110,10 +110,11 @@ export default function UsagePage() {
                                     </defs>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
                                     <XAxis dataKey="date" stroke="var(--text-tertiary)" fontSize={12} tickLine={false} axisLine={false} />
-                                    <YAxis stroke="var(--text-tertiary)" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => `${symbol}${v}`} />
+                                    <YAxis stroke="var(--text-tertiary)" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => fmt(v)} />
                                     <Tooltip
                                         contentStyle={{ backgroundColor: 'var(--bg-elevated)', border: '1px solid var(--border-color)', borderRadius: '8px' }}
                                         labelStyle={{ fontWeight: 600, color: 'var(--text-primary)' }}
+                                        formatter={(value: number | undefined) => [value !== undefined ? fmt(value) : '', 'Spend']}
                                     />
                                     <Area type="monotone" dataKey="spend" stroke="#4f6ef7" fillOpacity={1} fill="url(#colorSpend)" strokeWidth={2} />
                                 </AreaChart>
@@ -131,6 +132,7 @@ export default function UsagePage() {
                                     <Tooltip
                                         cursor={{ fill: 'transparent' }}
                                         contentStyle={{ backgroundColor: 'var(--bg-elevated)', border: '1px solid var(--border-color)', borderRadius: '8px' }}
+                                        formatter={(value: number | undefined) => [value !== undefined ? fmt(value) : '', 'Spend']}
                                     />
                                     <Bar dataKey="spend" fill="#7c5bf5" radius={[0, 4, 4, 0]} barSize={20} />
                                 </BarChart>

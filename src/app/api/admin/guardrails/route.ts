@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import { getSession, litellmFetch } from '@/lib/litellm';
+import { getSession, litellmFetch, hasReadAccess } from '@/lib/litellm';
 
 export async function GET() {
     const session = await getSession();
-    if (!session || session.role !== 'admin') {
+    if (!session || !hasReadAccess(session.role)) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
     try {

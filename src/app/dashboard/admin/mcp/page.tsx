@@ -77,6 +77,7 @@ export default function AdminMCPPage() {
     const [servers, setServers] = useState<any[]>([]);
     const [tools, setTools] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [isViewer, setIsViewer] = useState(false);
     const [tab, setTab] = useState<'servers' | 'connect' | 'catalog' | 'tools' | 'semantic' | 'network'>('servers');
     const [showAddModal, setShowAddModal] = useState(false);
     const [catalogFilter, setCatalogFilter] = useState('All');
@@ -121,9 +122,10 @@ export default function AdminMCPPage() {
 
     const fetchData = async () => {
         try {
-            const [mcpRes, settingsRes] = await Promise.all([
+            const [mcpRes, settingsRes, meRes] = await Promise.all([
                 fetch('/api/admin/mcp'),
                 fetch('/api/settings').catch(() => null),
+                fetch('/api/auth/me').catch(() => null),
             ]);
             const data = await mcpRes.json();
             setServers(data.servers || []);
@@ -131,6 +133,10 @@ export default function AdminMCPPage() {
             if (settingsRes?.ok) {
                 const s = await settingsRes.json();
                 if (s.apiEndpoint) setApiEndpoint(s.apiEndpoint);
+            }
+            if (meRes?.ok) {
+                const me = await meRes.json();
+                setIsViewer(me.isViewer);
             }
         } catch (e) { console.error(e); }
         finally { setLoading(false); }
@@ -238,7 +244,7 @@ export default function AdminMCPPage() {
                         <h1 style={{ marginBottom: '0.25rem' }}>MCP Servers</h1>
                         <p>Configure and manage your Model Context Protocol servers.</p>
                     </div>
-                    <button className="btn btn-primary" onClick={() => { resetForm(); setShowAddModal(true); }}>+ Add MCP Server</button>
+                    {!isViewer && <button className="btn btn-primary" onClick={() => { resetForm(); setShowAddModal(true); }}>+ Add MCP Server</button>}
                 </div>
             </header>
 
@@ -258,7 +264,7 @@ export default function AdminMCPPage() {
                     <div className="modal-card" style={{ width: '580px' }} onClick={e => e.stopPropagation()}>
                         <h3 style={{ fontWeight: 600, marginBottom: '1rem', fontSize: '1.05rem' }}>Add MCP Server</h3>
                         <form onSubmit={handleAdd} className="flex flex-col gap-4">
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                            <div className="grid-form-2">
                                 <div style={fieldStyle}>
                                     <label style={labelStyle}>Server Name *</label>
                                     <input className="input" placeholder="e.g. GitHub" value={formName} onChange={e => setFormName(e.target.value)} required />
@@ -276,7 +282,7 @@ export default function AdminMCPPage() {
                                 <label style={labelStyle}>Description</label>
                                 <input className="input" placeholder="What this server does" value={formDescription} onChange={e => setFormDescription(e.target.value)} />
                             </div>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                            <div className="grid-form-2">
                                 <div style={fieldStyle}>
                                     <label style={labelStyle}>Transport</label>
                                     <select className="input" value={formTransport} onChange={e => setFormTransport(e.target.value)}>
@@ -354,7 +360,7 @@ export default function AdminMCPPage() {
                             {/* Access & Teams */}
                             <div style={{ padding: '0.75rem', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)' }}>
                                 <span style={{ ...labelStyle, color: 'var(--accent-primary)', display: 'block', marginBottom: '0.5rem' }}>Access Controls</span>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                                <div className="grid-form-2">
                                     <div style={fieldStyle}>
                                         <label style={labelStyle}>Access Groups</label>
                                         <input className="input" placeholder="group1, group2" value={formAccessGroups} onChange={e => setFormAccessGroups(e.target.value)} />
@@ -383,7 +389,7 @@ export default function AdminMCPPage() {
                             {/* Headers */}
                             <div style={{ padding: '0.75rem', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)' }}>
                                 <span style={{ ...labelStyle, color: 'var(--text-secondary)', display: 'block', marginBottom: '0.5rem' }}>Headers (Advanced)</span>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                                <div className="grid-form-2">
                                     <div style={fieldStyle}>
                                         <label style={labelStyle}>Extra Headers (JSON)</label>
                                         <textarea className="input" rows={2} placeholder='{"X-Custom": "value"}' value={formExtraHeaders} onChange={e => setFormExtraHeaders(e.target.value)} style={{ fontFamily: 'monospace', fontSize: '0.72rem' }} />
@@ -450,7 +456,7 @@ export default function AdminMCPPage() {
                                                         {s.created_at ? new Date(s.created_at).toLocaleDateString() : '—'}
                                                     </td>
                                                     <td style={{ padding: '0.55rem 0.6rem' }}>
-                                                        <button onClick={() => handleDelete(s.server_id, s.server_name)} className="btn btn-outline" style={{ padding: '0.15rem 0.35rem', fontSize: '0.65rem', color: 'var(--danger)', borderColor: 'var(--danger)' }}>Delete</button>
+                                                        {!isViewer && <button onClick={() => handleDelete(s.server_id, s.server_name)} className="btn btn-outline" style={{ padding: '0.15rem 0.35rem', fontSize: '0.65rem', color: 'var(--danger)', borderColor: 'var(--danger)' }}>Delete</button>}
                                                     </td>
                                                 </tr>
                                             ))}
@@ -483,9 +489,9 @@ export default function AdminMCPPage() {
                             {filteredCatalog.map((cat, ci) => (
                                 <div key={ci}>
                                     <div style={{ fontSize: '0.72rem', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.5rem' }}>{cat.category}</div>
-                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '0.5rem' }}>
+                                    <div className="responsive-grid-2">
                                         {cat.servers.map((s, si) => (
-                                            <div key={si} className="glass-card" style={{ padding: '0.85rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }} onClick={() => addFromCatalog(s)}>
+                                            <div key={si} className="glass-card" style={{ padding: '0.85rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: isViewer ? 'default' : 'pointer' }} onClick={() => !isViewer && addFromCatalog(s)}>
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
                                                     <span style={{ fontSize: '1.3rem' }}>{s.icon}</span>
                                                     <div>
@@ -493,7 +499,7 @@ export default function AdminMCPPage() {
                                                         <div style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)' }}>{s.description}</div>
                                                     </div>
                                                 </div>
-                                                <span style={{ fontSize: '1rem', color: 'var(--text-tertiary)' }}>›</span>
+                                                {!isViewer && <span style={{ fontSize: '1rem', color: 'var(--text-tertiary)' }}>›</span>}
                                             </div>
                                         ))}
                                     </div>
@@ -511,7 +517,7 @@ export default function AdminMCPPage() {
                                     <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>Configure MCP servers to expose tools for LLM function calling.</p>
                                 </div>
                             ) : (
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '1rem' }}>
+                                <div className="responsive-grid-2">
                                     {tools.map((tool: any, idx: number) => (
                                         <div key={idx} className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                             <div className="card-stripe" style={{ background: 'var(--accent-gradient)' }}></div>
@@ -626,13 +632,13 @@ async with sse_client(
 
                                 <div className="flex flex-col gap-4">
                                     <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-                                        <input type="checkbox" checked={semanticEnabled} onChange={e => setSemanticEnabled(e.target.checked)} />
+                                        <input type="checkbox" checked={semanticEnabled} onChange={e => setSemanticEnabled(e.target.checked)} disabled={isViewer} />
                                         <span style={{ fontSize: '0.85rem', fontWeight: 500 }}>Enable Semantic Filtering</span>
                                     </label>
 
                                     {semanticEnabled && (
                                         <div style={{ padding: '0.75rem', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)' }} className="flex flex-col gap-4">
-                                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                                            <div className="grid-form-2">
                                                 <div style={fieldStyle}>
                                                     <label style={labelStyle}>Similarity Threshold</label>
                                                     <input className="input" type="number" step="0.05" min="0" max="1" value={semanticThreshold} onChange={e => setSemanticThreshold(e.target.value)} />
@@ -704,7 +710,7 @@ async with sse_client(
                                     <span style={{ fontSize: '0.65rem', color: 'var(--text-tertiary)' }}>Enter CIDR ranges (e.g., 10.0.0.0/8). When empty, standard private IP ranges are used. Separate multiple ranges with commas or newlines.</span>
                                 </div>
 
-                                <button className="btn btn-primary" style={{ marginTop: '0.75rem' }} onClick={() => alert('Network settings saved (note: requires LiteLLM config update to persist)')}>Save Network Settings</button>
+                                {!isViewer && <button className="btn btn-primary" style={{ marginTop: '0.75rem' }} onClick={() => alert('Network settings saved (note: requires LiteLLM config update to persist)')}>Save Network Settings</button>}
                             </div>
 
                             <div className="glass-card">

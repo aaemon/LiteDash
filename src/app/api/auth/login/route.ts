@@ -24,7 +24,20 @@ export async function POST(req: Request) {
             // AND the userId exists. For true prod, a separate DB should store passwords.
 
             try {
-                const userInfo = await litellmFetch(`/user/info?user_id=${username}`);
+                let userInfo = await litellmFetch(`/user/info?user_id=${username}`).catch(() => null);
+
+                // Fallback: if user_id fetch fails, the user might have entered their email as the username
+                if (!userInfo || !userInfo.user_id) {
+                    const listRes = await litellmFetch('/user/list').catch(() => null);
+                    if (listRes && listRes.users) {
+                        const found = listRes.users.find((u: any) => u.user_email === username);
+                        if (found) {
+                            // If found by email, fetch the full info object using the actual user_id
+                            userInfo = await litellmFetch(`/user/info?user_id=${found.user_id}`).catch(() => null);
+                        }
+                    }
+                }
+
                 if (!userInfo || !userInfo.user_id) {
                     return NextResponse.json({ error: 'User does not exist' }, { status: 401 });
                 }
@@ -48,7 +61,7 @@ export async function POST(req: Request) {
                 }
 
                 sessionData = {
-                    role: 'user',
+                    role: userInfo.user_info?.user_role || 'user',
                     userId: userInfo.user_id,
                 };
             } catch (err: any) {

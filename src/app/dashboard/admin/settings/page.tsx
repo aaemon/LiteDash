@@ -36,8 +36,10 @@ export default function AdminSettingsPage() {
     const [saved, setSaved] = useState(false);
     const [loading, setLoading] = useState(true);
     const [syncing, setSyncing] = useState(false);
+    const [isViewer, setIsViewer] = useState(false);
 
     useEffect(() => {
+        fetch('/api/auth/me').then(r => r.json()).then(d => setIsViewer(d.isViewer)).catch(() => { });
         fetch('/api/settings').then(r => r.json()).then(d => {
             setAppName(d.appName || '');
             setApiEndpoint(d.apiEndpoint || '');
@@ -122,12 +124,12 @@ export default function AdminSettingsPage() {
                     <div className="responsive-grid-2">
                         <div style={fieldStyle}>
                             <label style={labelStyle}>Application Name</label>
-                            <input className="input" placeholder="LiteLLM Portal" value={appName} onChange={e => setAppName(e.target.value)} />
+                            <input className="input" placeholder="LiteLLM Portal" value={appName} onChange={e => setAppName(e.target.value)} disabled={isViewer} />
                             <span style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)' }}>Displayed in the navbar and login page.</span>
                         </div>
                         <div style={fieldStyle}>
                             <label style={labelStyle}>Logo URL</label>
-                            <input className="input" placeholder="https://example.com/logo.png" value={logoUrl} onChange={e => setLogoUrl(e.target.value)} />
+                            <input className="input" placeholder="https://example.com/logo.png" value={logoUrl} onChange={e => setLogoUrl(e.target.value)} disabled={isViewer} />
                             <span style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)' }}>Image URL for the navbar logo. Leave blank for default.</span>
                         </div>
                     </div>
@@ -147,7 +149,7 @@ export default function AdminSettingsPage() {
 
                     <div style={fieldStyle}>
                         <label style={labelStyle}>API Endpoint URL</label>
-                        <input className="input" placeholder="https://api.yourcompany.com" value={apiEndpoint} onChange={e => setApiEndpoint(e.target.value)} />
+                        <input className="input" placeholder="https://api.yourcompany.com" value={apiEndpoint} onChange={e => setApiEndpoint(e.target.value)} disabled={isViewer} />
                         <span style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)' }}>
                             The public-facing URL shown in the API documentation. Users will use this to connect to the proxy.
                             If left blank, the current browser URL will be used.
@@ -165,7 +167,7 @@ export default function AdminSettingsPage() {
                     <div className="responsive-grid-3">
                         <div style={fieldStyle}>
                             <label style={labelStyle}>Display Currency</label>
-                            <select className="input" value={currency} onChange={e => handleCurrencyChange(e.target.value)}>
+                            <select className="input" value={currency} onChange={e => handleCurrencyChange(e.target.value)} disabled={isViewer}>
                                 {CURRENCIES.map(c => (
                                     <option key={c.code} value={c.code}>{c.symbol} {c.code} — {c.name}</option>
                                 ))}
@@ -173,14 +175,14 @@ export default function AdminSettingsPage() {
                         </div>
                         <div style={fieldStyle}>
                             <label style={labelStyle}>Currency Symbol</label>
-                            <input className="input" value={currencySymbol} onChange={e => setCurrencySymbol(e.target.value)} style={{ fontSize: '1rem', fontWeight: 700, textAlign: 'center' }} />
+                            <input className="input" value={currencySymbol} onChange={e => setCurrencySymbol(e.target.value)} style={{ fontSize: '1rem', fontWeight: 700, textAlign: 'center' }} disabled={isViewer} />
                             <span style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)' }}>Auto-set from currency. Editable.</span>
                         </div>
                         <div style={fieldStyle}>
                             <label style={labelStyle}>Conversion Multiplier (1 USD =)</label>
                             <div style={{ display: 'flex', gap: '0.35rem' }}>
-                                <input className="input" type="number" step="0.01" min="0" value={currencyMultiplier} onChange={e => setCurrencyMultiplier(e.target.value)} style={{ flex: 1 }} />
-                                <button type="button" className="btn btn-outline" onClick={handleSync} disabled={syncing || currency === 'USD'} style={{ fontSize: '0.68rem', padding: '0.2rem 0.5rem', whiteSpace: 'nowrap' }}>
+                                <input className="input" type="number" step="0.01" min="0" value={currencyMultiplier} onChange={e => setCurrencyMultiplier(e.target.value)} style={{ flex: 1 }} disabled={isViewer} />
+                                <button type="button" className="btn btn-outline" onClick={handleSync} disabled={syncing || currency === 'USD' || isViewer} style={{ fontSize: '0.68rem', padding: '0.2rem 0.5rem', whiteSpace: 'nowrap' }}>
                                     {syncing ? '⏳' : '🔄'} Sync
                                 </button>
                             </div>
@@ -207,16 +209,18 @@ export default function AdminSettingsPage() {
                 </div>
 
                 {/* Save */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <button type="submit" className="btn btn-primary" disabled={saving}>
-                        {saving ? 'Saving...' : 'Save Settings'}
-                    </button>
-                    {saved && (
-                        <span style={{ fontSize: '0.78rem', color: 'var(--success)', fontWeight: 500, animation: 'fadeIn 0.2s ease' }}>
-                            ✓ Settings saved — refresh to see changes across the portal.
-                        </span>
-                    )}
-                </div>
+                {!isViewer && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <button type="submit" className="btn btn-primary" disabled={saving}>
+                            {saving ? 'Saving...' : 'Save Settings'}
+                        </button>
+                        {saved && (
+                            <span style={{ fontSize: '0.78rem', color: 'var(--success)', fontWeight: 500, animation: 'fadeIn 0.2s ease' }}>
+                                ✓ Settings saved — refresh to see changes across the portal.
+                            </span>
+                        )}
+                    </div>
+                )}
             </form>
         </div>
     );

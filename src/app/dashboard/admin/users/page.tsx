@@ -10,6 +10,7 @@ export default function AdminUsersPage() {
     const [showModal, setShowModal] = useState(false);
     const [editUser, setEditUser] = useState<any>(null);
     const { symbol, format } = useCurrency();
+    const [isViewer, setIsViewer] = useState(false);
 
     // Form fields
     const [formUserId, setFormUserId] = useState('');
@@ -25,7 +26,16 @@ export default function AdminUsersPage() {
 
     const fetchUsers = async () => {
         try {
-            const res = await fetch('/api/admin/users');
+            const [meRes, res] = await Promise.all([
+                fetch('/api/auth/me'),
+                fetch('/api/admin/users')
+            ]);
+
+            if (meRes.ok) {
+                const meData = await meRes.json();
+                setIsViewer(meData.isViewer);
+            }
+
             const data = await res.json();
             if (res.ok) setUsers(data.users || []);
         } catch (e) { console.error(e); }
@@ -72,7 +82,12 @@ export default function AdminUsersPage() {
                         role: formRole
                     })
                 });
-                if (!res.ok) { const err = await res.json(); alert(err.error || 'Failed'); return; }
+                if (!res.ok) {
+                    let msg = 'Failed to update user';
+                    try { const err = await res.json(); msg = err.error || msg; } catch { }
+                    alert(msg);
+                    return;
+                }
             } else {
                 // Create
                 const res = await fetch('/api/admin/users', {
@@ -83,10 +98,23 @@ export default function AdminUsersPage() {
                         rpm_limit: formRpm, metadata: formMetadata, role: formRole
                     })
                 });
-                if (!res.ok) { const err = await res.json(); alert(err.error || 'Failed'); return; }
+                if (!res.ok) {
+                    let msg = 'Failed to create user';
+                    try { const err = await res.json(); msg = err.error || msg; } catch { }
+                    alert(msg);
+                    return;
+                }
             }
             setShowModal(false); resetForm(); fetchUsers();
-        } catch (e) { console.error(e); }
+        } catch (e: any) {
+            const msg = e?.message || 'Unknown error';
+            if (msg.includes('fetch') || msg.includes('network') || msg.includes('Failed to fetch')) {
+                alert('Connection error: Could not reach the LiteLLM proxy. Please check that the proxy is running and accessible.');
+            } else {
+                alert(`Error: ${msg}`);
+            }
+            console.error('User save error:', e);
+        }
         finally { setSaving(false); }
     };
 
@@ -110,7 +138,7 @@ export default function AdminUsersPage() {
                         <h1 style={{ marginBottom: '0.25rem' }}>Users & Budgets</h1>
                         <p>Manage portal users, allocate budgets, and configure access controls.</p>
                     </div>
-                    <button className="btn btn-primary" onClick={openCreate}>+ Create User</button>
+                    {!isViewer && <button className="btn btn-primary" onClick={openCreate}>+ Create User</button>}
                 </div>
             </header>
 
@@ -233,10 +261,12 @@ export default function AdminUsersPage() {
                                                 }}>{u.spend > (u.max_budget || Infinity) ? 'Over Budget' : 'Active'}</span>
                                             </td>
                                             <td style={{ padding: '0.5rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
-                                                <div style={{ display: 'flex', gap: '0.25rem', justifyContent: 'flex-end' }}>
-                                                    <button onClick={() => openEdit(u)} className="btn btn-outline" style={{ padding: '0.18rem 0.4rem', fontSize: '0.68rem' }}>Edit</button>
-                                                    <button onClick={() => handleDelete(u.user_id)} className="btn btn-outline" style={{ padding: '0.18rem 0.4rem', fontSize: '0.68rem', color: 'var(--danger)', borderColor: 'var(--danger)' }}>Delete</button>
-                                                </div>
+                                                {!isViewer && (
+                                                    <div style={{ display: 'flex', gap: '0.25rem', justifyContent: 'flex-end' }}>
+                                                        <button onClick={() => openEdit(u)} className="btn btn-outline" style={{ padding: '0.18rem 0.4rem', fontSize: '0.68rem' }}>Edit</button>
+                                                        <button onClick={() => handleDelete(u.user_id)} className="btn btn-outline" style={{ padding: '0.18rem 0.4rem', fontSize: '0.68rem', color: 'var(--danger)', borderColor: 'var(--danger)' }}>Delete</button>
+                                                    </div>
+                                                )}
                                             </td>
                                         </tr>
                                     );

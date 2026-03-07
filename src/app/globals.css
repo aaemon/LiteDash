@@ -608,6 +608,26 @@ table tbody tr:hover {
   gap: 1rem;
 }
 
+/* ── Form Grid Utilities ── */
+.grid-form-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.grid-form-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+/* ── Split Panel Grid (side-by-side 50/50 layout) ── */
+.grid-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
 /* ── Playground Grid ── */
 .playground-grid {
   display: grid;
@@ -720,9 +740,24 @@ table tbody tr:hover {
     grid-template-columns: 1fr;
   }
 
+  /* Form grids → single column */
+  .grid-form-2,
+  .grid-form-3,
+  .grid-split {
+    grid-template-columns: 1fr;
+  }
+
   /* Playground grid → stacked */
   .playground-grid {
     grid-template-columns: 1fr;
+  }
+
+  /* Modal → near full width */
+  .modal-card {
+    width: 94vw !important;
+    max-width: 94vw !important;
+    margin: 0.5rem;
+    padding: 1rem;
   }
 
   /* Modal → near full width */

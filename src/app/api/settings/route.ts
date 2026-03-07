@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getSession } from '@/lib/litellm';
+import { getSession, hasWriteAccess } from '@/lib/litellm';
 import fs from 'fs';
 import path from 'path';
 
@@ -28,7 +28,7 @@ export async function GET() {
 // Admin-only PUT — update settings
 export async function PUT(req: Request) {
     const session = await getSession();
-    if (!session || session.role !== 'admin') {
+    if (!session || !hasWriteAccess(session.role)) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
     try {
